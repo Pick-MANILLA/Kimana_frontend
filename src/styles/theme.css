@@ -1,0 +1,110 @@
+/*
+ * PLACEHOLDER DESIGN TOKENS — pending Figma (nl4CX8ZlG1Rw13Rfe3Vv5n, node 0-1).
+ * No Figma MCP or exported frames were available at scaffold time, so these
+ * values are provisional. Replace VALUES only — keep token NAMES stable so
+ * components (which reference names, never raw hex/px) don't need to change.
+ *
+ * Tailwind v4 is CSS-first: this @theme block IS the Tailwind config.
+ * Every name below becomes a utility (e.g. --color-brand-600 -> bg-brand-600,
+ * text-brand-600; --spacing-4 -> p-4, gap-4; --radius-md -> rounded-md).
+ */
+@import "tailwindcss";
+
+@theme {
+  /* ---- Color: brand ---- */
+  /* Deep indigo — trust/finance, distinct from any single-currency association */
+  --color-brand-50: #eef1fd;
+  --color-brand-100: #d9dffa;
+  --color-brand-200: #b3bff5;
+  --color-brand-300: #8199ee;
+  --color-brand-400: #5672e3;
+  --color-brand-500: #3752d1;
+  --color-brand-600: #2b3fae; /* primary action color */
+  --color-brand-700: #24358c;
+  --color-brand-800: #1f2c70;
+  --color-brand-900: #1a255a;
+
+  /* ---- Color: accent (secondary actions, highlights) ---- */
+  --color-accent-50: #fff8ec;
+  --color-accent-100: #ffecc7;
+  --color-accent-200: #ffd889;
+  --color-accent-300: #ffbe4d;
+  --color-accent-400: #f7a51f;
+  --color-accent-500: #e08a0a;
+  --color-accent-600: #b96a05;
+
+  /* ---- Color: semantic status ---- */
+  --color-success-50: #eafbf1;
+  --color-success-500: #1d9a5c;
+  --color-success-600: #167a49;
+  --color-warning-50: #fff8e6;
+  --color-warning-500: #c58a00;
+  --color-warning-600: #9c6e00;
+  --color-danger-50: #fdecec;
+  --color-danger-500: #d13c3c;
+  --color-danger-600: #ab2c2c;
+  --color-info-50: #eaf3fd;
+  --color-info-500: #2b7fd1;
+  --color-info-600: #1f63a8;
+
+  /* ---- Color: neutrals (backgrounds, text, borders) ---- */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #f7f8fa;
+  --color-neutral-100: #eef0f3;
+  --color-neutral-200: #dfe2e8;
+  --color-neutral-300: #c3c8d1;
+  --color-neutral-400: #9aa1ae;
+  --color-neutral-500: #707786;
+  --color-neutral-600: #545b6b;
+  --color-neutral-700: #3d4251;
+  --color-neutral-800: #282b36;
+  --color-neutral-900: #16171e;
+
+  /* ---- Type scale (mobile-first, 360px baseline) ---- */
+  /* System font stack: zero network cost on mid-range Android / weak links */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --text-xs: 0.75rem; /* 12px — meta, timestamps, helper text */
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem; /* 13px — secondary body, form labels */
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.9375rem; /* 15px — primary body */
+  --text-base--line-height: 1.5rem;
+  --text-md: 1.0625rem; /* 17px — emphasised body, list titles */
+  --text-md--line-height: 1.5rem;
+  --text-lg: 1.25rem; /* 20px — section headings */
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.5rem; /* 24px — screen titles */
+  --text-xl--line-height: 2rem;
+  --text-2xl: 1.875rem; /* 30px — hero amounts (e.g. balance) */
+  --text-2xl--line-height: 2.25rem;
+  --text-3xl: 2.25rem; /* 36px — large amount displays */
+  --text-3xl--line-height: 2.5rem;
+
+  /* ---- Spacing scale ---- */
+  /* Tailwind's default 4px-based scale already covers most needs; a few
+     named aliases below for layout rhythm used consistently across screens. */
+  --spacing-gutter: 1rem; /* 16px — standard screen/page horizontal padding */
+  --spacing-stack-sm: 0.5rem;
+  --spacing-stack-md: 1rem;
+  --spacing-stack-lg: 1.5rem;
+  --spacing-section: 2rem;
+
+  /* ---- Radii ---- */
+  --radius-sm: 0.375rem; /* 6px — inputs, chips */
+  --radius-md: 0.625rem; /* 10px — buttons, cards */
+  --radius-lg: 1rem; /* 16px — modals, sheets */
+  --radius-xl: 1.5rem; /* 24px — bottom sheet top corners */
+
+  /* ---- Shadows (elevation) ---- */
+  --shadow-card: 0 1px 2px 0 rgb(22 23 30 / 0.06), 0 1px 3px 0 rgb(22 23 30 / 0.08);
+  --shadow-raised: 0 4px 10px -2px rgb(22 23 30 / 0.12), 0 2px 4px -2px rgb(22 23 30 / 0.08);
+  --shadow-sheet: 0 -4px 16px -4px rgb(22 23 30 / 0.16);
+
+  /* ---- Motion ---- */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Dark mode intentionally deferred until Figma defines it (not requested in
+   scope). Single light theme for v1. */

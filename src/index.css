@@ -1,0 +1,30 @@
+@import "./styles/theme.css";
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    /* Prevents iOS auto-zoom on input focus; base 16px keeps rem tokens exact */
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    color: var(--color-neutral-900);
+    background: var(--color-neutral-50);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Visible focus for keyboard users — never suppressed anywhere in this app */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+}
