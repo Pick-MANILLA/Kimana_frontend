@@ -26,6 +26,10 @@ export const onboardingSteps = [
 export const businessDetailsCopy = {
   title: 'Business details',
   subtitle: 'Register your company to access cross-border payments and trade finance.',
+  authSectionTitle: 'Account Authentication',
+  email: { label: 'Business Email Address', placeholder: 'name@company.com' },
+  password: { label: 'Password', placeholder: 'Minimum 6 characters' },
+  confirmPassword: { label: 'Confirm Password', placeholder: 'Re-enter your password' },
   legalName: { label: 'Registered Business Name', placeholder: 'e.g. Adunola Exports Ltd' },
   cacNumber: { label: 'RC Number (CAC)', placeholder: 'RC-1234567' },
   businessType: { label: 'Business Type', placeholder: 'Select an option' },

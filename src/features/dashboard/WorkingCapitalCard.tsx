@@ -1,26 +1,34 @@
 import type { WorkingCapitalOffer } from '../../api/types/dashboard';
-import { ArrowUpRightIcon } from '../../components/ui/icons';
-import { dashboardCopy } from '../../copy';
+import { Badge } from '../../components/ui/Badge';
 import { formatMoney } from '../../money/money';
 
-export function WorkingCapitalCard({ offer }: { offer: WorkingCapitalOffer }) {
+export function WorkingCapitalCard({ offer }: { offer?: WorkingCapitalOffer }) {
   return (
-    <div className="mt-4 rounded-md p-4" style={{ background: 'var(--color-surface-2)' }}>
-      <span
-        className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold"
-        style={{ background: 'var(--color-brand-800)', color: 'var(--color-brand-200)' }}
-      >
-        {dashboardCopy.workingCapital}
-      </span>
-      <p className="mt-2.5 text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-        Advance up to {formatMoney(offer.maxAdvance)}
+    <div
+      className="mt-4 rounded-xl border p-5 transition-all"
+      style={{
+        backgroundColor: 'var(--color-surface-2)',
+        borderColor: 'var(--color-border-subtle)',
+      }}
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-brand-400)' }}>
+          Working Capital
+        </span>
+        <Badge tone="warning">Coming soon</Badge>
+      </div>
+
+      <p className="mt-3 text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>
+        {offer
+          ? `Advance up to ${formatMoney(offer.maxAdvance)}`
+          : 'Build your verified payment history with Kimana.'}
       </p>
-      <p className="mt-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-        {offer.basisDescription} · {offer.monthlyRatePercent}% / month
+
+      <p className="mt-1 text-xs leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+        {offer
+          ? `${offer.basisDescription} · ${offer.monthlyRatePercent}% / month`
+          : "Access to working capital is part of Kimana's longer-term roadmap."}
       </p>
-      <button type="button" className="mt-2.5 flex items-center gap-1 text-sm font-medium" style={{ color: 'var(--color-brand-400)' }}>
-        {dashboardCopy.applyNow} <ArrowUpRightIcon size={13} />
-      </button>
     </div>
   );
 }

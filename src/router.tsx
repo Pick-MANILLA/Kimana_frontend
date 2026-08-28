@@ -1,7 +1,9 @@
 import { lazy, Suspense } from 'react';
 import type { ReactNode } from 'react';
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+const LandingPage = lazy(() => import('./features/landing/LandingPage').then((m) => ({ default: m.LandingPage })));
+const LoginPage = lazy(() => import('./features/auth/LoginPage').then((m) => ({ default: m.LoginPage })));
 const BusinessDetailsPage = lazy(() =>
   import('./features/onboarding/BusinessDetailsPage').then((m) => ({ default: m.BusinessDetailsPage })),
 );
@@ -29,7 +31,8 @@ function withSuspense(node: ReactNode) {
 }
 
 const router = createBrowserRouter([
-  { path: '/', element: <Navigate to="/onboarding/business-details" replace /> },
+  { path: '/', element: withSuspense(<LandingPage />) },
+  { path: '/login', element: withSuspense(<LoginPage />) },
   { path: '/onboarding/business-details', element: withSuspense(<BusinessDetailsPage />) },
   { path: '/onboarding/directors-ubo', element: withSuspense(<DirectorsUboPage />) },
   { path: '/onboarding/documents', element: withSuspense(<DocumentsPage />) },

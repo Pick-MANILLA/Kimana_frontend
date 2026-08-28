@@ -29,6 +29,8 @@ export type IndustrySector =
   | 'other';
 
 export interface BusinessDetails {
+  readonly email?: string;
+  readonly password?: string;
   readonly legalName: string;
   readonly tradingName?: string;
   readonly cacNumber: string;
