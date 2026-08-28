@@ -24,52 +24,41 @@
 @import "tailwindcss";
 
 @theme static {
-  /* ---- Color: brand (indigo/violet primary) ---- */
-  --color-brand-50: #f2f1fe;
-  --color-brand-100: #e1e0fc;
-  --color-brand-200: #c3c1f9;
-  --color-brand-300: #a8a7f9;
-  --color-brand-400: #7d7cf6;
-  --color-brand-500: #6866f4;
-  --color-brand-600: #5250f3; /* primary action color */
-  --color-brand-700: #3b3aa4;
-  --color-brand-800: #34338a;
-  --color-brand-900: #2e2d75; /* also used as disabled/muted button fill */
+  /* ---- Color: brand (Kimana Orange primary accent) ---- */
+  --color-brand-50: #fff4ed;
+  --color-brand-100: #ffe4d4;
+  --color-brand-200: #ffc5a8;
+  --color-brand-300: #ff9e70;
+  --color-brand-400: #ff7838;
+  --color-brand-500: #ff6b00;
+  --color-brand-600: #ff5500; /* primary orange brand accent */
+  --color-brand-700: #e04800;
+  --color-brand-800: #b83a00;
+  --color-brand-900: #822900; /* used as disabled dark button fill */
 
   /* ---- Color: semantic status ---- */
-  /* Status chips in the source are solid, high-contrast fills, not soft
-     tints — each has one fill + one designated on-fill text color. */
-  --color-success: #47fc74;
-  --color-success-strong: #2c8646;
-  --color-on-success: #111118;
-  --color-danger: #cf2828;
+  --color-success: #22c55e;
+  --color-success-strong: #16a34a;
+  --color-on-success: #ffffff;
+  --color-danger: #ef4444;
   --color-on-danger: #ffffff;
-  --color-warning: #f8d33f;
+  --color-warning: #f59e0b;
   --color-on-warning: #241d02;
-  /* No distinct info hue exists in the source frames — the "Screened" /
-     "Paying out" in-progress chips sample identical to brand-600. */
-  --color-info: var(--color-brand-600);
+  --color-info: #3b82f6;
   --color-on-info: #ffffff;
 
-  /* ---- Color: surfaces & text (dark UI — this is the only theme the
-     source defines, there is no light counterpart to derive) ---- */
-  --color-canvas: #161621; /* page background, sidebar */
-  --color-surface-1: #1d1d28; /* card / panel base */
-  --color-surface-2: #24242e; /* nested surface: inputs, stat tiles, chips */
-  --color-border-subtle: #2c2c38; /* estimated — no isolated hairline sample */
-  --color-text-primary: #dcdcde;
-  --color-text-secondary: #8b8b90;
-  --color-text-placeholder: #6c6c74; /* estimated from noisy placeholder samples */
+  /* ---- Color: default surfaces & text ---- */
+  --color-canvas: #0b0c10; /* page background, sidebar */
+  --color-surface-1: #151720; /* card / panel base */
+  --color-surface-2: #1e212d; /* nested surface: inputs, stat tiles, chips */
+  --color-border-subtle: #272a38;
+  --color-text-primary: #f3f4f6;
+  --color-text-secondary: #9ca3af;
+  --color-text-placeholder: #6b7280;
   --color-text-on-brand: #ffffff;
+  --color-navbar-bg: rgba(11, 12, 16, 0.88);
 
   /* ---- Type scale (mobile-first, 360px baseline) ---- */
-  /* Carried over unchanged from the pre-design placeholder — pending
-     confirmation against the real design's actual type metrics. */
-  /* "Noto Sans" placed before the generic sans-serif fallback: Android ships
-     it system-wide with correct Naira-glyph metrics, so it only engages on
-     platforms lacking the OS-native fonts above (Linux dev boxes, mainly) —
-     no download, no cost on the target device. Fixes a real glyph-overlap
-     bug found rendering ₦ amounts without it. */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", "Noto Sans", Arial, sans-serif;
 
@@ -98,17 +87,12 @@
   --spacing-section: 2rem;
 
   /* ---- Radii ---- */
-  /* Buttons, badges, and the stepper's step circles read as fully pill/
-     circular in every frame; cards read as a large, consistent radius. */
-  --radius-sm: 0.5rem; /* 8px — inputs */
-  --radius-md: 0.75rem; /* 12px — cards, panels */
-  --radius-lg: 1rem; /* 16px — larger containers, sheets */
-  --radius-full: 9999px; /* buttons, badges, step indicators */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
 
   /* ---- Shadows ---- */
-  /* The source UI reads as flat — depth comes from surface-color layering,
-     not drop shadows. Kept minimal and dark-appropriate for the rare case
-     a floating element (menu, tooltip) needs separation from a dark page. */
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.24);
   --shadow-raised: 0 8px 24px -4px rgb(0 0 0 / 0.4);
   --shadow-sheet: 0 -4px 20px -4px rgb(0 0 0 / 0.45);
@@ -116,3 +100,38 @@
   /* ---- Motion ---- */
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 }
+
+/* ---- Dynamic Theme Overrides ---- */
+:root,
+[data-theme="dark"] {
+  --color-canvas: #0b0c10;
+  --color-surface-1: #151720;
+  --color-surface-2: #1e212d;
+  --color-border-subtle: #272a38;
+  --color-text-primary: #f3f4f6;
+  --color-text-secondary: #9ca3af;
+  --color-text-placeholder: #6b7280;
+  --color-text-on-brand: #ffffff;
+  --color-navbar-bg: rgba(11, 12, 16, 0.88);
+
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.24);
+  --shadow-raised: 0 8px 24px -4px rgb(0 0 0 / 0.4);
+  --shadow-sheet: 0 -4px 20px -4px rgb(0 0 0 / 0.45);
+}
+
+[data-theme="light"] {
+  --color-canvas: #f8fafc;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f1f5f9;
+  --color-border-subtle: #e2e8f0;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-placeholder: #94a3b8;
+  --color-text-on-brand: #ffffff;
+  --color-navbar-bg: rgba(255, 255, 255, 0.88);
+
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-raised: 0 10px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+  --shadow-sheet: 0 -4px 20px -4px rgb(0 0 0 / 0.1);
+}
+

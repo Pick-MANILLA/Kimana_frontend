@@ -1,29 +1,100 @@
 import { brand } from '../../copy';
 
-export function LogoMark({ size = 40 }: { size?: number }) {
+export interface LogoProps {
+  size?: number;
+  variant?: 'brand' | 'light' | 'dark' | 'auto';
+  className?: string;
+}
+
+export function LogoMark({
+  size = 40,
+  variant = 'auto',
+  className = '',
+}: LogoProps) {
+  const secondaryColor =
+    variant === 'light'
+      ? '#111118'
+      : variant === 'dark'
+      ? '#FFFFFF'
+      : 'var(--color-text-primary)';
+
   return (
-    <div
-      className="flex shrink-0 items-center justify-center rounded-[10px]"
-      style={{ width: size, height: size, background: 'var(--color-brand-600)' }}
-      aria-hidden="true"
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`shrink-0 ${className}`}
+      aria-label={`${brand.name} mark`}
     >
-      <svg width={size * 0.5} height={size * 0.5} viewBox="0 0 24 24" fill="none">
-        <path
-          d="M12 2L14 9L21 11L14 13L12 20L10 13L3 11L10 9L12 2Z"
-          fill="white"
-        />
-      </svg>
-    </div>
+      <defs>
+        <linearGradient id="kimana-orange-main" x1="6" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FF6B00" />
+          <stop offset="100%" stopColor="#FF3800" />
+        </linearGradient>
+        <linearGradient id="kimana-orange-glow" x1="13" y1="6" x2="34" y2="20" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FF8533" />
+          <stop offset="100%" stopColor="#FF5500" />
+        </linearGradient>
+      </defs>
+
+      {/* Left Pillar (Stability & Financial Infrastructure) */}
+      <rect x="6" y="6" width="6.5" height="28" rx="3.25" fill="url(#kimana-orange-main)" />
+
+      {/* Upper Forward Arm (Cross-Border Flow & Growth) */}
+      <rect
+        x="13"
+        y="17.5"
+        width="21"
+        height="6.5"
+        rx="3.25"
+        fill="url(#kimana-orange-glow)"
+        transform="rotate(-42 13 20.75)"
+      />
+
+      {/* Lower Interlocking Bridge (Global Connection & Trust) */}
+      <rect
+        x="13"
+        y="15.75"
+        width="21"
+        height="6.5"
+        rx="3.25"
+        fill={secondaryColor}
+        transform="rotate(42 13 19)"
+      />
+    </svg>
   );
 }
 
-export function LogoWithWordmark() {
+export function LogoWithWordmark({
+  size = 36,
+  variant = 'auto',
+  className = '',
+}: LogoProps) {
+  const textColor =
+    variant === 'light'
+      ? '#111118'
+      : variant === 'dark'
+      ? '#FFFFFF'
+      : 'var(--color-text-primary)';
+
   return (
-    <div className="flex items-center justify-center gap-2.5">
-      <LogoMark size={36} />
-      <span className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+    <div className={`inline-flex items-center gap-2.5 select-none ${className}`}>
+      <LogoMark size={size} variant={variant} />
+      <span
+        className="font-bold tracking-tight"
+        style={{
+          fontSize: `${size * 0.56}px`,
+          lineHeight: 1,
+          color: textColor,
+        }}
+      >
         {brand.name}
       </span>
     </div>
   );
 }
+
+export const Logo = LogoWithWordmark;
+

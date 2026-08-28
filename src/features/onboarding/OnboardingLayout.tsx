@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { BackButton } from '../../components/ui/BackButton';
 import { LogoWithWordmark } from '../../components/ui/Logo';
 import { Stepper } from '../../components/ui/Stepper';
 import { footerDisclaimer, onboardingSteps } from '../../copy';
@@ -10,13 +11,26 @@ interface OnboardingLayoutProps {
   children: ReactNode;
 }
 
+const ONBOARDING_BACK_ROUTES: readonly string[] = [
+  '/',                             // 0: Business details -> Landing page
+  '/onboarding/business-details',  // 1: Directors & UBO -> Business details
+  '/onboarding/directors-ubo',    // 2: Documents -> Directors & UBO
+  '/onboarding/documents',        // 3: Verification -> Documents
+  '/onboarding/verification',     // 4: Approved -> Verification
+];
+
 export function OnboardingLayout({ stepIndex, title, subtitle, children }: OnboardingLayoutProps) {
+  const backTarget = ONBOARDING_BACK_ROUTES[stepIndex] ?? '/';
+
   return (
     <div className="min-h-screen px-gutter py-8" style={{ background: 'var(--color-canvas)' }}>
       <div className="mx-auto max-w-2xl">
-        <LogoWithWordmark />
+        <div className="flex items-center justify-between mb-6">
+          <BackButton to={backTarget} />
+          <LogoWithWordmark size={30} />
+        </div>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <Stepper steps={onboardingSteps} currentIndex={stepIndex} />
         </div>
 
