@@ -352,3 +352,71 @@ export const currencyName = {
   EGP: 'Egyptian Pound',
   XSD: 'Settlement Unit',
 };
+
+// ---------------------------------------------------------------------------
+// Transfers history page copy
+// ---------------------------------------------------------------------------
+
+export const transfersPageCopy = {
+  pageTitle: 'Transfers',
+  pageSubtitle: 'Full history of your cross-border payments.',
+
+  // ── Toolbar ───────────────────────────────────────────────────────────────
+  searchPlaceholder: 'Search by reference or beneficiary…',
+  filterStatus: 'Status',
+  filterStatusAll: 'All statuses',
+  filterCurrency: 'Currency',
+  filterCurrencyAll: 'All currencies',
+  filterDateFrom: 'From',
+  filterDateTo: 'To',
+  filterAmountMin: 'Min amount',
+  filterAmountMax: 'Max amount',
+  clearFilters: 'Clear filters',
+  exportBtn: 'Download statement',
+  exportToast: 'Your statement export has been queued. You will be notified when it is ready.',
+  startTransfer: '+ New Transfer',
+
+  // ── Table headers ─────────────────────────────────────────────────────────
+  colReference: 'Reference',
+  colBeneficiary: 'Beneficiary',
+  colAmount: 'Amount',
+  colRate: 'Rate (NGN)',
+  colStatus: 'Status',
+  colDate: 'Date',
+  colDescription: 'Description',
+
+  // ── Pagination ────────────────────────────────────────────────────────────
+  pageSize: 8,
+  showingOf: (from, to, total) => `Showing ${from}–${to} of ${total}`,
+  prevPage: 'Previous',
+  nextPage: 'Next',
+
+  // ── Loading / error / empty states ────────────────────────────────────────
+  loadingTitle: 'Loading transfers…',
+  errorTitle: 'Could not load transfers',
+  errorBody: 'A connection issue prevented your transfers from loading. Check your signal and try again.',
+  errorRetry: 'Try again',
+  emptyTitle: 'No transfers yet',
+  emptyBody: 'When you send your first cross-border payment it will appear here.',
+  emptyAction: 'Start a transfer',
+  noMatchTitle: 'No matching transfers',
+  noMatchBody: 'Try adjusting your search or filters.',
+
+  // ── Detail panel ──────────────────────────────────────────────────────────
+  detailTitle: 'Transfer details',
+  detailClose: 'Close',
+  detailReference: 'Reference',
+  detailBeneficiary: 'Beneficiary',
+  detailDescription: 'Description',
+  detailSendAmount: 'You sent',
+  detailReceiveAmount: 'Beneficiary received',
+  detailRate: 'Exchange rate',
+  detailCreated: 'Created',
+  detailUpdated: 'Last updated',
+  detailPayoutRef: 'Payout reference',
+  detailReversalReason: 'Reversal reason',
+  timelineTitle: 'Status timeline',
+  timelineLoadingTitle: 'Loading timeline…',
+  timelineErrorTitle: 'Could not load timeline',
+  timelineErrorRetry: 'Retry',
+};

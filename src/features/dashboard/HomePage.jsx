@@ -15,6 +15,7 @@ import { NewTransferModal } from './NewTransferModal';
 import { ReconciliationView } from './ReconciliationView';
 import { Sidebar } from './Sidebar';
 import { TransfersTable } from './TransfersTable';
+import { TransfersPage } from './TransfersPage';
 import { WorkingCapitalCard } from './WorkingCapitalCard';
 
 export function HomePage() {
@@ -210,21 +211,7 @@ export function HomePage() {
           )}
 
           {activeTab === 'transfers' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>All Cross-Border Transfers</h2>
-                  <p className="mt-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>Full audit log of active and completed transfers</p>
-                </div>
-                <Button type="button" className="px-5 text-xs font-bold" onClick={() => handleOpenTransferModal('10,000', 'USD')}>
-                  <PlusIcon size={14} color="var(--color-text-on-brand)" /> Start Transfer
-                </Button>
-              </div>
-
-              <div className="rounded-2xl border p-6 shadow-xl" style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}>
-                <TransfersTable customTransfers={userTransfers} />
-              </div>
-            </div>
+            <TransfersPage onNewTransfer={() => handleOpenTransferModal('10,000', 'USD')} />
           )}
 
           {activeTab === 'documents' && <DocumentsView />}
