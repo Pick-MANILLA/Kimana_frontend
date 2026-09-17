@@ -3,13 +3,18 @@
 import { useRouter } from 'next/navigation';
 import { LogoWithWordmark } from '../../components/ui/Logo';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
-import { CardIcon, DocumentIcon, GearIcon, GridIcon, LogOutIcon, SendIcon, ShieldIcon } from '../../components/ui/icons';
+import { ArrowRightIcon, CardIcon, DocumentIcon, GearIcon, GridIcon, LogOutIcon, SendIcon, ShieldIcon } from '../../components/ui/icons';
 
 const NAV_ITEMS = [
   { id: 'overview', icon: GridIcon, label: 'Overview' },
   { id: 'transfers', icon: SendIcon, label: 'Transfers' },
   { id: 'documents', icon: DocumentIcon, label: 'Documents' },
   { id: 'reconciliation', icon: CardIcon, label: 'Reconciliation' },
+];
+
+// Items that navigate to a dedicated route rather than switching a tab.
+const NAV_LINKS = [
+  { id: 'exchange', icon: ArrowRightIcon, label: 'Exchange', href: '/exchange' },
 ];
 
 export function Sidebar({ activeTab, onTabChange, onLogout }) {
@@ -55,6 +60,26 @@ export function Sidebar({ activeTab, onTabChange, onLogout }) {
               </li>
             );
           })}
+
+          {/* Divider before route-navigation items */}
+          <li role="separator" className="my-1.5 mx-3.5 border-t" style={{ borderColor: 'var(--color-border-subtle)' }} aria-hidden="true" />
+
+          {NAV_LINKS.map(({ id, icon: Icon, label, href }) => (
+            <li key={id}>
+              <button
+                type="button"
+                onClick={() => router.push(href)}
+                className="w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                style={{
+                  backgroundColor: 'transparent',
+                  color: 'var(--color-text-secondary)',
+                }}
+              >
+                <Icon size={18} color="var(--color-text-secondary)" />
+                <span>{label}</span>
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
 

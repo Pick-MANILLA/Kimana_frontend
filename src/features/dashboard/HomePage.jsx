@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '../../components/ui/Button';
 import { LogoWithWordmark } from '../../components/ui/Logo';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
-import { ArrowUpRightIcon, CardIcon, DocumentIcon, GridIcon, LogOutIcon, PlusIcon, SendIcon } from '../../components/ui/icons';
+import { ArrowUpRightIcon, CardIcon, DocumentIcon, GridIcon, LogOutIcon, PlusIcon, SendIcon, ArrowRightIcon } from '../../components/ui/icons';
 import { timeOfDayGreeting } from '../../copy';
 import { formatLongDate } from '../../lib/formatDate';
 import { BalanceCard } from './BalanceCard';
@@ -85,6 +85,16 @@ export function HomePage() {
             <span>{label}</span>
           </button>
         ))}
+        {/* Exchange navigates to its own route */}
+        <button
+          type="button"
+          onClick={() => router.push('/exchange')}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors"
+          style={{ backgroundColor: 'transparent', color: 'var(--color-text-secondary)' }}
+        >
+          <ArrowRightIcon size={14} color="currentColor" />
+          <span>Exchange</span>
+        </button>
       </div>
 
       {/* Left Navigation Sidebar (desktop) */}

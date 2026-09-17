@@ -148,6 +148,18 @@ function seedFxRates() {
     ['EUR/NGN', 1802.5, -0.11],
     ['GBP/NGN', 2088.4, 0.18],
     ['GHS/NGN', 110.25, -0.44],
+    // XSD is the platform's internal settlement asset — treated as a
+    // non-national currency (ISO X-prefix convention) pegged 1:1 to USD
+    // for conversion purposes. No "wallet", "stablecoin", or chain
+    // vocabulary is exposed here or in any user-facing surface.
+    ['USD/XSD', 1.0, 0.0],
+    ['XSD/USD', 1.0, 0.0],
+    ['EUR/XSD', 1.096, 0.01],
+    ['XSD/EUR', 0.9124, -0.01],
+    ['GBP/XSD', 1.271, 0.02],
+    ['XSD/GBP', 0.7869, -0.02],
+    ['NGN/XSD', 0.000608, 0.0],
+    ['XSD/NGN', 1645.2, 0.32],
   ];
   return new Map(
     entries.map(([pair, rate, changePercent24h]) => {
@@ -194,6 +206,14 @@ export function createMockStore() {
         balance: { amountMinor: 1_820_000, currency: 'EUR' },
         asOf: nowIso(),
       },
+      // XSD: platform settlement balance — X-prefix ISO convention for
+      // non-national units (e.g. XAU for gold). No crypto vocabulary here.
+      {
+        accountId: 'acct_xsd',
+        currency: 'XSD',
+        balance: { amountMinor: 8_750_000, currency: 'XSD' },
+        asOf: nowIso(),
+      },
     ],
     fxRates: seedFxRates(),
     pendingActions: [
@@ -224,6 +244,8 @@ export function createMockStore() {
       basisDescription: 'Against Amsterdam Commodities receivable',
       monthlyRatePercent: 2.5,
     },
+    // Tracks external payout orders initiated from the /exchange page.
+    settlementPayouts: [],
   };
 }
 

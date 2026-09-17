@@ -190,3 +190,165 @@ export const transferFailureCopy = {
   compliance_hold: 'This transfer is under review. We’ll update you as soon as it clears.',
   partner_failure: 'Our payment partner couldn’t complete this step. We’re retrying automatically.',
 };
+
+// ---------------------------------------------------------------------------
+// Exchange page copy
+// ---------------------------------------------------------------------------
+
+export const exchangeCopy = {
+  pageTitle: 'Exchange',
+  pageSubtitle: 'Convert between your local-currency balances and your settlement balance, or send funds to an external destination.',
+
+  settlementBalanceLabel: 'Settlement Balance',
+  settlementBalanceCurrencyName: 'Settlement Unit',
+  settlementBalanceCurrencyCode: 'XSD',
+  settlementBalanceDescription: 'Your available settlement balance, ready to convert or send externally.',
+
+  tabs: {
+    toSettlement: 'Local → Settlement',
+    fromSettlement: 'Settlement → Local',
+    externalPayout: 'External Payout',
+  },
+
+  // ── Convert local → settlement ──────────────────────────────────────────
+  convertIn: {
+    title: 'Convert to settlement balance',
+    subtitle: 'Choose a local-currency balance to convert. The rate is locked for 90 seconds once you request a firm quote.',
+    sourceLabel: 'From',
+    sourcePlaceholder: 'Select currency',
+    amountLabel: 'Amount to convert',
+    amountPlaceholder: '0.00',
+    indicativeRateLabel: 'Indicative rate',
+    getQuote: 'Get firm quote',
+    loadingRate: 'Fetching rate…',
+    noRate: 'Select a currency to see the rate',
+  },
+
+  // ── Convert settlement → local ──────────────────────────────────────────
+  convertOut: {
+    title: 'Convert to local currency',
+    subtitle: 'Convert part of your settlement balance back to a local currency at the locked rate.',
+    destinationLabel: 'To',
+    destinationPlaceholder: 'Select currency',
+    amountLabel: 'Amount (XSD)',
+    amountPlaceholder: '0.00',
+    indicativeRateLabel: 'Indicative rate',
+    getQuote: 'Get firm quote',
+    loadingRate: 'Fetching rate…',
+    noRate: 'Select a destination currency to see the rate',
+  },
+
+  // ── External payout ──────────────────────────────────────────────────────
+  payout: {
+    title: 'Send to external destination',
+    subtitle: 'Transfer settlement balance to an external destination. A flat dispatch fee applies.',
+    amountLabel: 'Amount (XSD)',
+    amountPlaceholder: '0.00',
+    destinationRefLabel: 'Destination reference',
+    destinationRefPlaceholder: 'Enter destination reference',
+    destinationRefHint: 'Provide the exact reference for the destination you want to send to.',
+    getQuote: 'Get firm quote',
+  },
+
+  // ── Shared quote / confirm step ─────────────────────────────────────────
+  quote: {
+    title: 'Confirm conversion',
+    payoutTitle: 'Confirm payout',
+    quoteExpiresIn: 'Quote expires in',
+    quoteExpired: 'Quote expired — request a new one',
+    breakdown: {
+      youSend: 'You send',
+      youReceive: 'You receive',
+      destination: 'Destination',
+      rate: 'Exchange rate',
+      fee: 'Dispatch fee',
+      noFee: 'No fee',
+      totalDeducted: 'Total deducted',
+    },
+    confirm: 'Confirm',
+    requote: 'Get new quote',
+    back: 'Back',
+    processing: 'Processing…',
+  },
+
+  // ── Success step ─────────────────────────────────────────────────────────
+  success: {
+    conversionTitle: 'Conversion complete',
+    payoutTitle: 'Payout submitted',
+    conversionBody: 'Your balances have been updated. The converted amount is now available.',
+    payoutBody: 'Your payout is being processed. Track its progress below.',
+    reference: 'Reference',
+    done: 'Done',
+    viewPayouts: 'View payout status',
+    goBack: 'Back to exchange',
+  },
+
+  // ── Payout history / status tracker ─────────────────────────────────────
+  payoutHistory: {
+    title: 'Recent payouts',
+    empty: 'No payouts yet.',
+    reference: 'Reference',
+    amount: 'Amount',
+    destination: 'Destination',
+    status: 'Status',
+    date: 'Date',
+  },
+
+  // ── Errors ───────────────────────────────────────────────────────────────
+  errors: {
+    amountRequired: 'Enter an amount to continue.',
+    amountPositive: 'Amount must be greater than zero.',
+    amountExceedsBalance: 'Amount exceeds your available balance.',
+    currencyRequired: 'Select a currency to continue.',
+    destinationRequired: 'Enter a destination reference to continue.',
+    destinationTooShort: 'Destination reference is too short — check and try again.',
+    quoteExpired: 'This quote has expired. Request a new one to continue.',
+    generic: 'Something went wrong. Try again.',
+    network: 'A connection issue interrupted this request. Check your signal and try again.',
+  },
+};
+
+/** Plain-language labels for settlement payout statuses. */
+export const payoutStatusLabel = {
+  SUBMITTED: 'Submitted',
+  PROCESSING: 'Processing',
+  DISPATCHED: 'Dispatched',
+  COMPLETED: 'Completed',
+  FAILED: 'Not completed',
+  CANCELLED: 'Cancelled',
+};
+
+/** One-line customer-facing descriptions for each payout status. */
+export const payoutStatusDescription = {
+  SUBMITTED: 'Your payout request has been received and is queued.',
+  PROCESSING: 'We\'re preparing your funds for dispatch.',
+  DISPATCHED: 'Your funds are on their way to the destination.',
+  COMPLETED: 'Your payout was delivered successfully.',
+  FAILED: 'This payout couldn\'t be completed. Contact support if funds haven\'t returned.',
+  CANCELLED: 'This payout was cancelled before dispatch.',
+};
+
+/** Badge tone for each payout status — mirrors transferStatusTone conventions. */
+export const payoutStatusTone = {
+  SUBMITTED: 'neutral',
+  PROCESSING: 'info',
+  DISPATCHED: 'info',
+  COMPLETED: 'success',
+  FAILED: 'danger',
+  CANCELLED: 'danger',
+};
+
+/** Human-readable currency names for local balances shown on the exchange page. */
+export const currencyName = {
+  NGN: 'Nigerian Naira',
+  USD: 'US Dollar',
+  EUR: 'Euro',
+  GBP: 'British Pound',
+  GHS: 'Ghanaian Cedi',
+  KES: 'Kenyan Shilling',
+  ZAR: 'South African Rand',
+  XOF: 'West African CFA Franc',
+  XAF: 'Central African CFA Franc',
+  EGP: 'Egyptian Pound',
+  XSD: 'Settlement Unit',
+};

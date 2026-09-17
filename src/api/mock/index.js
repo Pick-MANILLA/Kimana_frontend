@@ -10,6 +10,7 @@ import { quoteApi } from './quoteApi';
 import { reconciliationApi } from './reconciliationApi';
 import { recipientApi } from './recipientApi';
 import { screeningApi } from './screeningApi';
+import { settlementApi } from './settlementApi';
 import { transferApi } from './transferApi';
 
 export const mockApiClient = {
@@ -29,4 +30,5 @@ export const mockApiClient = {
   opsTransactions: opsTransactionApi,
   opsLedger: opsLedgerApi,
   opsTradeDocuments: opsTradeDocumentApi,
+  settlement: settlementApi,
 };
