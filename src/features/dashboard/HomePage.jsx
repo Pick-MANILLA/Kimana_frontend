@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '../../components/ui/Button';
 import { LogoWithWordmark } from '../../components/ui/Logo';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
-import { ArrowUpRightIcon, CardIcon, DocumentIcon, GridIcon, LogOutIcon, PlusIcon, SendIcon } from '../../components/ui/icons';
+import { ArrowUpRightIcon, CardIcon, DocumentIcon, GridIcon, LogOutIcon, PlusIcon, SendIcon, ArrowRightIcon } from '../../components/ui/icons';
 import { timeOfDayGreeting } from '../../copy';
 import { formatLongDate } from '../../lib/formatDate';
 import { BalanceCard } from './BalanceCard';
@@ -15,6 +15,7 @@ import { NewTransferModal } from './NewTransferModal';
 import { ReconciliationView } from './ReconciliationView';
 import { Sidebar } from './Sidebar';
 import { TransfersTable } from './TransfersTable';
+import { TransfersPage } from './TransfersPage';
 import { WorkingCapitalCard } from './WorkingCapitalCard';
 
 export function HomePage() {
@@ -85,6 +86,16 @@ export function HomePage() {
             <span>{label}</span>
           </button>
         ))}
+        {/* Exchange navigates to its own route */}
+        <button
+          type="button"
+          onClick={() => router.push('/exchange')}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors"
+          style={{ backgroundColor: 'transparent', color: 'var(--color-text-secondary)' }}
+        >
+          <ArrowRightIcon size={14} color="currentColor" />
+          <span>Exchange</span>
+        </button>
       </div>
 
       {/* Left Navigation Sidebar (desktop) */}
@@ -200,21 +211,7 @@ export function HomePage() {
           )}
 
           {activeTab === 'transfers' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>All Cross-Border Transfers</h2>
-                  <p className="mt-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>Full audit log of active and completed transfers</p>
-                </div>
-                <Button type="button" className="px-5 text-xs font-bold" onClick={() => handleOpenTransferModal('10,000', 'USD')}>
-                  <PlusIcon size={14} color="var(--color-text-on-brand)" /> Start Transfer
-                </Button>
-              </div>
-
-              <div className="rounded-2xl border p-6 shadow-xl" style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}>
-                <TransfersTable customTransfers={userTransfers} />
-              </div>
-            </div>
+            <TransfersPage onNewTransfer={() => handleOpenTransferModal('10,000', 'USD')} />
           )}
 
           {activeTab === 'documents' && <DocumentsView />}
