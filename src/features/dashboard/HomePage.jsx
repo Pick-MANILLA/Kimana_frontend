@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '../../components/ui/Button';
 import { LogoWithWordmark } from '../../components/ui/Logo';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
-import { ArrowUpRightIcon, CardIcon, DocumentIcon, GridIcon, LogOutIcon, PlusIcon, SendIcon, ArrowRightIcon } from '../../components/ui/icons';
+import { ArrowUpRightIcon, CardIcon, DocumentIcon, GearIcon, GridIcon, LogOutIcon, MenuIcon, PlusIcon, SendIcon, ArrowRightIcon } from '../../components/ui/icons';
 import { timeOfDayGreeting } from '../../copy';
 import { formatLongDate } from '../../lib/formatDate';
 import { BalanceCard } from './BalanceCard';
@@ -13,7 +13,7 @@ import { DocumentsView } from './DocumentsView';
 import { FxRatesPanel } from './FxRatesPanel';
 import { NewTransferModal } from './NewTransferModal';
 import { ReconciliationView } from './ReconciliationView';
-import { Sidebar } from './Sidebar';
+import { Sidebar, SidebarDrawer } from './Sidebar';
 import { TransfersTable } from './TransfersTable';
 import { TransfersPage } from './TransfersPage';
 import { WorkingCapitalCard } from './WorkingCapitalCard';
@@ -23,6 +23,7 @@ import { useDefaultCurrency } from '../../hooks/useDefaultCurrency';
 export function HomePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isNavOpen, setIsNavOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAmount, setModalAmount] = useState('10,000');
   const [modalCurrency, setModalCurrency] = useState('USD');
@@ -79,8 +80,8 @@ export function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row font-sans" style={{ background: 'var(--color-canvas)', color: 'var(--color-text-primary)' }}>
-      {/* Mobile Top Header (hidden on md and larger) */}
+    <div className="min-h-screen flex flex-col lg:flex-row font-sans" style={{ background: 'var(--color-canvas)', color: 'var(--color-text-primary)' }}>
+      {/* Mobile Top Header (phones only — tablet gets its own toolbar below) */}
       <div className="flex md:hidden items-center justify-between px-4 py-3 border-b" style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}>
         <LogoWithWordmark size={26} />
         <div className="flex items-center gap-2">
@@ -108,6 +109,7 @@ export function HomePage() {
           { id: 'transfers', label: 'Transfers', icon: SendIcon },
           { id: 'documents', label: 'Documents', icon: DocumentIcon },
           { id: 'reconciliation', label: 'Reconciliation', icon: CardIcon },
+          { id: 'settings', label: 'Settings', icon: GearIcon },
         ].map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -135,11 +137,53 @@ export function HomePage() {
         </button>
       </div>
 
-      {/* Left Navigation Sidebar (desktop) */}
+      {/* Tablet Toolbar (md–lg): sidebar is hidden at this width, opened via menu button */}
+      <div className="hidden md:flex lg:hidden items-center justify-between px-6 py-3 border-b" style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsNavOpen(true)}
+            aria-label="Open navigation menu"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border transition-colors hover:opacity-80"
+            style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-text-secondary)' }}
+          >
+            <MenuIcon size={18} color="currentColor" />
+          </button>
+          <LogoWithWordmark size={28} />
+        </div>
+        <div className="flex items-center gap-2">
+          <ThemeToggle size={28} />
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all hover:bg-rose-500/10 hover:text-rose-400"
+            style={{
+              backgroundColor: 'var(--color-surface-2)',
+              borderColor: 'var(--color-border-subtle)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            <LogOutIcon size={14} color="currentColor" />
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Left Navigation Sidebar (desktop, lg+) */}
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} onLogout={handleLogout} />
+
+      {/* Off-canvas nav for tablet, opened from the toolbar above */}
+      <SidebarDrawer
+        isOpen={isNavOpen}
+        onClose={() => setIsNavOpen(false)}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onLogout={handleLogout}
+      />
 
       {/* Main Content Area */}
       <main className="min-w-0 flex-1 px-4 py-6 sm:px-10 lg:px-12 overflow-y-auto">
+       <div className="mx-auto max-w-[1600px]">
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-6" style={{ borderColor: 'var(--color-border-subtle)' }}>
           <div>
@@ -253,6 +297,7 @@ export function HomePage() {
           initialAmount={modalAmount}
           initialCurrency={modalCurrency}
         />
+       </div>
       </main>
     </div>
   );
