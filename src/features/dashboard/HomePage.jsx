@@ -17,6 +17,8 @@ import { Sidebar } from './Sidebar';
 import { TransfersTable } from './TransfersTable';
 import { TransfersPage } from './TransfersPage';
 import { WorkingCapitalCard } from './WorkingCapitalCard';
+import { SettingsView } from './SettingsView';
+import { useDefaultCurrency } from '../../hooks/useDefaultCurrency';
 
 export function HomePage() {
   const router = useRouter();
@@ -25,6 +27,41 @@ export function HomePage() {
   const [modalAmount, setModalAmount] = useState('10,000');
   const [modalCurrency, setModalCurrency] = useState('USD');
   const [userTransfers, setUserTransfers] = useState([]);
+  const { preferredCurrency } = useDefaultCurrency();
+
+  // All balance cards defined in one place so we can reorder by preference.
+  const ALL_BALANCE_CARDS = [
+    {
+      currency: 'NGN',
+      currencyName: 'Nigerian Naira',
+      balance: { amountMinor: 1245000000, currency: 'NGN' },
+      secondaryLine: 'NIP Liquidity Ready',
+      deltaText: 'Available Operating Balance',
+      deltaTone: 'success',
+    },
+    {
+      currency: 'USD',
+      currencyName: 'US Dollar',
+      balance: { amountMinor: 2500000, currency: 'USD' },
+      secondaryLine: 'Correspondent Rail Active',
+      deltaText: 'Cross-Border Pool',
+      deltaTone: 'success',
+    },
+    {
+      currency: 'EUR',
+      currencyName: 'Euro',
+      balance: { amountMinor: 1800000, currency: 'EUR' },
+      secondaryLine: 'SEPA Settlement Ready',
+      deltaText: 'Eurozone Corridor',
+      deltaTone: 'success',
+    },
+  ];
+
+  // Float the preferred currency to position 0, keep the rest in original order.
+  const orderedBalanceCards = [
+    ...ALL_BALANCE_CARDS.filter((c) => c.currency === preferredCurrency),
+    ...ALL_BALANCE_CARDS.filter((c) => c.currency !== preferredCurrency),
+  ];
 
   const handleLogout = () => {
     localStorage.removeItem('kimana_session');
@@ -149,30 +186,17 @@ export function HomePage() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  <BalanceCard
-                    currencyName="Nigerian Naira"
-                    currency="NGN"
-                    balance={{ amountMinor: 1245000000, currency: 'NGN' }}
-                    secondaryLine="NIP Liquidity Ready"
-                    deltaText="Available Operating Balance"
-                    deltaTone="success"
-                  />
-                  <BalanceCard
-                    currencyName="US Dollar"
-                    currency="USD"
-                    balance={{ amountMinor: 2500000, currency: 'USD' }}
-                    secondaryLine="Correspondent Rail Active"
-                    deltaText="Cross-Border Pool"
-                    deltaTone="success"
-                  />
-                  <BalanceCard
-                    currencyName="Euro"
-                    currency="EUR"
-                    balance={{ amountMinor: 1800000, currency: 'EUR' }}
-                    secondaryLine="SEPA Settlement Ready"
-                    deltaText="Eurozone Corridor"
-                    deltaTone="success"
-                  />
+                  {orderedBalanceCards.map((card) => (
+                    <BalanceCard
+                      key={card.currency}
+                      currencyName={card.currencyName}
+                      currency={card.currency}
+                      balance={card.balance}
+                      secondaryLine={card.secondaryLine}
+                      deltaText={card.deltaText}
+                      deltaTone={card.deltaTone}
+                    />
+                  ))}
                 </div>
               </div>
 
@@ -217,6 +241,8 @@ export function HomePage() {
           {activeTab === 'documents' && <DocumentsView />}
 
           {activeTab === 'reconciliation' && <ReconciliationView />}
+
+          {activeTab === 'settings' && <SettingsView />}
         </div>
 
         {/* Multi-Step New Transfer Modal */}

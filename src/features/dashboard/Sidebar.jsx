@@ -98,10 +98,14 @@ export function Sidebar({ activeTab, onTabChange, onLogout }) {
         </button>
         <button
           type="button"
-          className="w-full flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-medium transition-colors hover:text-white"
-          style={{ color: 'var(--color-text-secondary)' }}
+          onClick={() => onTabChange('settings')}
+          className="w-full flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-medium transition-colors"
+          style={{
+            backgroundColor: activeTab === 'settings' ? 'var(--color-surface-2)' : 'transparent',
+            color: activeTab === 'settings' ? 'var(--color-brand-600)' : 'var(--color-text-secondary)',
+          }}
         >
-          <GearIcon size={16} color="var(--color-text-secondary)" />
+          <GearIcon size={16} color={activeTab === 'settings' ? 'var(--color-brand-600)' : 'var(--color-text-secondary)'} />
           <span>Settings</span>
         </button>
 
