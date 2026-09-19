@@ -420,3 +420,83 @@ export const transfersPageCopy = {
   timelineErrorTitle: 'Could not load timeline',
   timelineErrorRetry: 'Retry',
 };
+
+// ---------------------------------------------------------------------------
+// Settings page copy
+// ---------------------------------------------------------------------------
+
+export const settingsCopy = {
+  pageTitle: 'Settings',
+
+  sections: {
+    profile: 'Profile',
+    notifications: 'Notifications',
+    defaults: 'Defaults',
+    security: 'Security',
+    appearance: 'Appearance',
+  },
+
+  profile: {
+    sectionTitle: 'Business profile',
+    sectionSubtitle: 'Read-only information from your approved KYB application.',
+    legalName: 'Registered business name',
+    accountId: 'Account ID',
+    segment: 'Segment',
+    corridor: 'Corridor',
+    monthlyLimit: 'Monthly limit',
+    loading: 'Loading profile…',
+    error: 'Could not load profile. Check your connection and try again.',
+  },
+
+  notifications: {
+    sectionTitle: 'Notification preferences',
+    sectionSubtitle: 'Choose how you want to be notified about account activity.',
+    channels: {
+      email: 'Email',
+      sms: 'SMS',
+      push: 'Push',
+    },
+    events: {
+      transferCompleted: 'Transfer completed',
+      complianceHold: 'Compliance hold',
+      documentRequested: 'Document requested',
+    },
+  },
+
+  defaults: {
+    sectionTitle: 'Default currency',
+    sectionSubtitle: 'Your preferred currency will appear first in balance cards and the FX panel.',
+    label: 'Preferred currency',
+    placeholder: 'Select a currency',
+    options: [
+      { value: 'NGN', label: 'Nigerian Naira (NGN)' },
+      { value: 'USD', label: 'US Dollar (USD)' },
+      { value: 'EUR', label: 'Euro (EUR)' },
+    ],
+  },
+
+  security: {
+    sectionTitle: 'Security',
+    changePassword: {
+      title: 'Change password',
+      currentPassword: { label: 'Current password', placeholder: 'Enter your current password' },
+      newPassword: { label: 'New password', placeholder: 'Minimum 8 characters' },
+      confirmPassword: { label: 'Confirm new password', placeholder: 'Re-enter your new password' },
+      submit: 'Update password',
+      submitting: 'Updating…',
+      success: 'Password updated successfully.',
+    },
+    twoFactor: {
+      title: 'Two-factor authentication',
+      badge: 'Coming soon',
+      description: 'Add an extra layer of security to your account with two-factor authentication.',
+    },
+  },
+
+  appearance: {
+    sectionTitle: 'Appearance',
+    sectionSubtitle: 'Controls how the dashboard looks on this device.',
+    themeLabel: 'Theme',
+    themeHint: 'Your preference is saved locally and applied on every visit.',
+  },
+};
