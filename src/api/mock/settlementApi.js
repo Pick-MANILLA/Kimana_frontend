@@ -2,17 +2,15 @@
  * Mock API for the /exchange page.
  *
  * Three capabilities:
- *   1. Get the customer's settlement balance (XSD account).
+ *   1. Get the customer's settlement balance (USDC account).
  *   2. Request and execute a conversion quote between a local-currency
  *      balance and the settlement balance (in either direction).
  *   3. Initiate an external payout of settlement balance to an external
  *      destination reference.
  *
- * Compliance note (internal only — never surfaces in UI copy or payloads):
- *   XSD is the platform's settlement asset. "External destination reference"
- *   in the UI corresponds to a destination address at the infrastructure layer.
- *   None of that vocabulary (blockchain, stablecoin, USDC, wallet, chain)
- *   appears in any user-facing string, route, or inspectable mock payload.
+ * USDC is shown to users by that name on /exchange. "External destination
+ * reference" in the UI corresponds to a destination address at the
+ * infrastructure layer, but is deliberately kept generic in copy.
  */
 
 import { DEMO_CUSTOMER_ID, store } from './seed';
@@ -42,7 +40,7 @@ const TERMINAL_PAYOUT_STATUSES = new Set(['COMPLETED', 'FAILED', 'CANCELLED']);
 // Helpers
 // ---------------------------------------------------------------------------
 
-function getXsdRate(sendCurrency, receiveCurrency) {
+function getUsdcRate(sendCurrency, receiveCurrency) {
   const key = `${sendCurrency}/${receiveCurrency}`;
   const entry = store.fxRates.get(key);
   if (!entry) {
@@ -78,30 +76,30 @@ export const settlementApi = {
    */
   async getSettlementBalance() {
     await simulateNetwork({ minMs: 200, maxMs: 600 });
-    const balance = store.balances.find((b) => b.currency === 'XSD');
+    const balance = store.balances.find((b) => b.currency === 'USDC');
     if (!balance) throw apiError('NOT_FOUND', 'Settlement balance account not found.', false);
     return { ...balance, asOf: nowIso() };
   },
 
   /**
-   * Returns all local-currency balances (non-XSD) available for conversion.
+   * Returns all local-currency balances (non-USDC) available for conversion.
    * Reuses the same AccountBalance shape.
    */
   async getLocalBalances() {
     await simulateNetwork({ minMs: 150, maxMs: 500 });
     return store.balances
-      .filter((b) => b.currency !== 'XSD')
+      .filter((b) => b.currency !== 'USDC')
       .map((b) => ({ ...b, asOf: nowIso() }));
   },
 
   /**
-   * Returns an indicative rate for a currency pair involving XSD.
+   * Returns an indicative rate for a currency pair involving USDC.
    * Fast poll — used to show a "live" rate estimate before requesting
    * a firm quote.
    */
   async getIndicativeRate(sendCurrency, receiveCurrency) {
     await simulateNetwork({ minMs: 150, maxMs: 400, failureRate: 0.02 });
-    return getXsdRate(sendCurrency, receiveCurrency);
+    return getUsdcRate(sendCurrency, receiveCurrency);
   },
 
   /**
@@ -130,7 +128,7 @@ export const settlementApi = {
    */
   async requestConversionQuote(input) {
     await simulateNetwork();
-    const rateEntry = getXsdRate(input.sendCurrency, input.receiveCurrency);
+    const rateEntry = getUsdcRate(input.sendCurrency, input.receiveCurrency);
 
     const sendAmount =
       input.amountField === 'send'
@@ -151,7 +149,7 @@ export const settlementApi = {
     const issuedAt = new Date();
     const expiresAt = new Date(issuedAt.getTime() + QUOTE_TTL_MS);
 
-    const direction = input.receiveCurrency === 'XSD' ? 'to_settlement' : 'from_settlement';
+    const direction = input.receiveCurrency === 'USDC' ? 'to_settlement' : 'from_settlement';
 
     return {
       id: shortId('cq'),
@@ -227,7 +225,7 @@ export const settlementApi = {
    * Requests a firm quote for an external payout of settlement balance.
    *
    * input: {
-   *   amount: Money,                    // must be XSD
+   *   amount: Money,                    // must be USDC
    *   destinationReference: string,    // opaque external reference — not
    *                                    // labelled "wallet address" anywhere
    * }
@@ -242,15 +240,15 @@ export const settlementApi = {
       throw apiError('VALIDATION', 'Please enter a valid destination reference.', false);
     }
 
-    const xsdBalance = store.balances.find((b) => b.currency === 'XSD');
-    if (xsdBalance && xsdBalance.balance.amountMinor < input.amount.amountMinor) {
+    const usdcBalance = store.balances.find((b) => b.currency === 'USDC');
+    if (usdcBalance && usdcBalance.balance.amountMinor < input.amount.amountMinor) {
       throw apiError('INSUFFICIENT_FUNDS', 'The requested amount exceeds your settlement balance.', false);
     }
 
     const issuedAt = new Date();
     const expiresAt = new Date(issuedAt.getTime() + QUOTE_TTL_MS);
 
-    // Network fee for external dispatch: flat 2 XSD (200 minor units).
+    // Network fee for external dispatch: flat 2 USDC (200 minor units).
     const feeMinor = 200;
 
     return {
@@ -259,10 +257,10 @@ export const settlementApi = {
       destinationReference: input.destinationReference,
       breakdown: {
         rate: 1,
-        fee: { amountMinor: feeMinor, currency: 'XSD' },
-        sendAmount: { amountMinor: input.amount.amountMinor, currency: 'XSD' },
+        fee: { amountMinor: feeMinor, currency: 'USDC' },
+        sendAmount: { amountMinor: input.amount.amountMinor, currency: 'USDC' },
         // Net amount received at destination after fee.
-        receiveAmount: { amountMinor: input.amount.amountMinor - feeMinor, currency: 'XSD' },
+        receiveAmount: { amountMinor: input.amount.amountMinor - feeMinor, currency: 'USDC' },
       },
       issuedAt: issuedAt.toISOString(),
       expiresAt: expiresAt.toISOString(),
@@ -290,16 +288,16 @@ export const settlementApi = {
     }
 
     // Debit settlement balance.
-    const xsdAccount = store.balances.find((b) => b.currency === 'XSD');
-    if (!xsdAccount) throw apiError('NOT_FOUND', 'Settlement balance not found.', false);
-    if (xsdAccount.balance.amountMinor < quote.breakdown.sendAmount.amountMinor) {
+    const usdcAccount = store.balances.find((b) => b.currency === 'USDC');
+    if (!usdcAccount) throw apiError('NOT_FOUND', 'Settlement balance not found.', false);
+    if (usdcAccount.balance.amountMinor < quote.breakdown.sendAmount.amountMinor) {
       throw apiError('INSUFFICIENT_FUNDS', 'Insufficient settlement balance to complete this payout.', false);
     }
-    xsdAccount.balance = {
-      ...xsdAccount.balance,
-      amountMinor: xsdAccount.balance.amountMinor - quote.breakdown.sendAmount.amountMinor,
+    usdcAccount.balance = {
+      ...usdcAccount.balance,
+      amountMinor: usdcAccount.balance.amountMinor - quote.breakdown.sendAmount.amountMinor,
     };
-    xsdAccount.asOf = nowIso();
+    usdcAccount.asOf = nowIso();
 
     const payout = {
       id: shortId('po'),

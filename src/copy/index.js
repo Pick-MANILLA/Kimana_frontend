@@ -201,7 +201,7 @@ export const exchangeCopy = {
 
   settlementBalanceLabel: 'Settlement Balance',
   settlementBalanceCurrencyName: 'Settlement Unit',
-  settlementBalanceCurrencyCode: 'XSD',
+  settlementBalanceCurrencyCode: 'USDC',
   settlementBalanceDescription: 'Your available settlement balance, ready to convert or send externally.',
 
   tabs: {
@@ -230,7 +230,7 @@ export const exchangeCopy = {
     subtitle: 'Convert part of your settlement balance back to a local currency at the locked rate.',
     destinationLabel: 'To',
     destinationPlaceholder: 'Select currency',
-    amountLabel: 'Amount (XSD)',
+    amountLabel: 'Amount (USDC)',
     amountPlaceholder: '0.00',
     indicativeRateLabel: 'Indicative rate',
     getQuote: 'Get firm quote',
@@ -242,7 +242,7 @@ export const exchangeCopy = {
   payout: {
     title: 'Send to external destination',
     subtitle: 'Transfer settlement balance to an external destination. A flat dispatch fee applies.',
-    amountLabel: 'Amount (XSD)',
+    amountLabel: 'Amount (USDC)',
     amountPlaceholder: '0.00',
     destinationRefLabel: 'Destination reference',
     destinationRefPlaceholder: 'Enter destination reference',
@@ -350,7 +350,7 @@ export const currencyName = {
   XOF: 'West African CFA Franc',
   XAF: 'Central African CFA Franc',
   EGP: 'Egyptian Pound',
-  XSD: 'Settlement Unit',
+  USDC: 'Settlement Unit',
 };
 
 // ---------------------------------------------------------------------------

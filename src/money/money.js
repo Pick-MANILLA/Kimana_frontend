@@ -3,10 +3,8 @@
  * Every currency in scope uses 2 today; kept as a lookup rather than a
  * constant so a future zero-decimal currency doesn't silently corrupt math.
  *
- * XSD is the platform's internal settlement unit — ISO X-prefix convention
- * for non-national currencies (e.g. XAU for gold). 2 decimal places, same
- * as all other currencies here. No crypto/stablecoin vocabulary surfaces
- * in this file or any user-facing string.
+ * USDC is the platform's settlement unit, shown to users by that name.
+ * 2 decimal places, same as all other currencies here.
  */
 const MINOR_UNIT_EXPONENT = {
   NGN: 2,
@@ -15,7 +13,7 @@ const MINOR_UNIT_EXPONENT = {
   ZAR: 2,
   XOF: 2,
   XAF: 2,
-  XSD: 2,
+  USDC: 2,
   EGP: 2,
   USD: 2,
   EUR: 2,
@@ -29,7 +27,7 @@ const CURRENCY_SYMBOL = {
   ZAR: 'R',
   XOF: 'CFA',
   XAF: 'FCFA',
-  XSD: 'XSD ',
+  USDC: 'USDC ',
   EGP: 'E£',
   USD: '$',
   EUR: '€',

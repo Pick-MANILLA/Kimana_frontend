@@ -367,18 +367,16 @@ function seedFxRates() {
     ['EUR/NGN', 1802.5, -0.11],
     ['GBP/NGN', 2088.4, 0.18],
     ['GHS/NGN', 110.25, -0.44],
-    // XSD is the platform's internal settlement asset — treated as a
-    // non-national currency (ISO X-prefix convention) pegged 1:1 to USD
-    // for conversion purposes. No "wallet", "stablecoin", or chain
-    // vocabulary is exposed here or in any user-facing surface.
-    ['USD/XSD', 1.0, 0.0],
-    ['XSD/USD', 1.0, 0.0],
-    ['EUR/XSD', 1.096, 0.01],
-    ['XSD/EUR', 0.9124, -0.01],
-    ['GBP/XSD', 1.271, 0.02],
-    ['XSD/GBP', 0.7869, -0.02],
-    ['NGN/XSD', 0.000608, 0.0],
-    ['XSD/NGN', 1645.2, 0.32],
+    // USDC is the platform's settlement asset, shown to users by that name.
+    // Pegged 1:1 to USD for conversion purposes.
+    ['USD/USDC', 1.0, 0.0],
+    ['USDC/USD', 1.0, 0.0],
+    ['EUR/USDC', 1.096, 0.01],
+    ['USDC/EUR', 0.9124, -0.01],
+    ['GBP/USDC', 1.271, 0.02],
+    ['USDC/GBP', 0.7869, -0.02],
+    ['NGN/USDC', 0.000608, 0.0],
+    ['USDC/NGN', 1645.2, 0.32],
   ];
   return new Map(
     entries.map(([pair, rate, changePercent24h]) => {
@@ -425,12 +423,11 @@ export function createMockStore() {
         balance: { amountMinor: 1_820_000, currency: 'EUR' },
         asOf: nowIso(),
       },
-      // XSD: platform settlement balance — X-prefix ISO convention for
-      // non-national units (e.g. XAU for gold). No crypto vocabulary here.
+      // USDC: platform settlement balance, shown to users by that name.
       {
-        accountId: 'acct_xsd',
-        currency: 'XSD',
-        balance: { amountMinor: 8_750_000, currency: 'XSD' },
+        accountId: 'acct_usdc',
+        currency: 'USDC',
+        balance: { amountMinor: 8_750_000, currency: 'USDC' },
         asOf: nowIso(),
       },
     ],

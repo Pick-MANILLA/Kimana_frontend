@@ -8,9 +8,7 @@
  *   2. Convert settlement balance → local currency  (tab: 'from_settlement')
  *   3. External payout of settlement balance        (tab: 'external_payout')
  *
- * Compliance: "XSD" is the settlement unit code. No banned vocabulary
- * (blockchain, stablecoin, USDC, wallet, chain) appears in any rendered
- * string, route, or inspectable payload.
+ * "USDC" is the settlement unit code, shown to users by that name.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -189,7 +187,7 @@ function IndicativeRateRow({ rate, loading, noRateMessage }) {
   }
   return (
     <p className="text-xs font-medium" style={{ color: 'var(--color-text-secondary)' }}>
-      Indicative rate: <span style={{ color: 'var(--color-text-primary)' }}>1 {rate.sendCurrency} = {rate.rate.toFixed(rate.receiveCurrency === 'XSD' || rate.sendCurrency === 'XSD' ? 4 : 2)} {rate.receiveCurrency}</span>
+      Indicative rate: <span style={{ color: 'var(--color-text-primary)' }}>1 {rate.sendCurrency} = {rate.rate.toFixed(rate.receiveCurrency === 'USDC' || rate.sendCurrency === 'USDC' ? 4 : 2)} {rate.receiveCurrency}</span>
     </p>
   );
 }
@@ -269,7 +267,7 @@ function QuoteBreakdown({ quote, isPayoutQuote }) {
         {
           label: exchangeCopy.quote.breakdown.rate,
           value: `1 ${quote.sendCurrency} = ${breakdown.rate.toFixed(
-            quote.receiveCurrency === 'XSD' || quote.sendCurrency === 'XSD' ? 4 : 2,
+            quote.receiveCurrency === 'USDC' || quote.sendCurrency === 'USDC' ? 4 : 2,
           )} ${quote.receiveCurrency}`,
         },
         { label: exchangeCopy.quote.breakdown.fee, value: hasFee ? formatMoney(breakdown.fee, { useCode: true }) : exchangeCopy.quote.breakdown.noFee },
@@ -414,7 +412,7 @@ function ConvertInFlow({ settlementBalance, localBalances, onConversionComplete 
     if (!currency) { setIndicativeRate(null); return; }
     let cancelled = false;
     setRateLoading(true);
-    api.settlement.getIndicativeRate(currency, 'XSD')
+    api.settlement.getIndicativeRate(currency, 'USDC')
       .then((r) => { if (!cancelled) setIndicativeRate(r); })
       .catch(() => { if (!cancelled) setIndicativeRate(null); })
       .finally(() => { if (!cancelled) setRateLoading(false); });
@@ -444,7 +442,7 @@ function ConvertInFlow({ settlementBalance, localBalances, onConversionComplete 
       const minor = parseMinorUnits(amountStr, currency);
       const q = await api.settlement.requestConversionQuote({
         sendCurrency: currency,
-        receiveCurrency: 'XSD',
+        receiveCurrency: 'USDC',
         amountField: 'send',
         amount: { amountMinor: minor, currency },
       });
@@ -665,7 +663,7 @@ function ConvertOutFlow({ settlementBalance, onConversionComplete }) {
     if (!currency) { setIndicativeRate(null); return; }
     let cancelled = false;
     setRateLoading(true);
-    api.settlement.getIndicativeRate('XSD', currency)
+    api.settlement.getIndicativeRate('USDC', currency)
       .then((r) => { if (!cancelled) setIndicativeRate(r); })
       .catch(() => { if (!cancelled) setIndicativeRate(null); })
       .finally(() => { if (!cancelled) setRateLoading(false); });
@@ -675,7 +673,7 @@ function ConvertOutFlow({ settlementBalance, onConversionComplete }) {
   function validate() {
     const errs = {};
     if (!currency) errs.currency = exchangeCopy.errors.currencyRequired;
-    const minor = parseMinorUnits(amountStr, 'XSD');
+    const minor = parseMinorUnits(amountStr, 'USDC');
     if (minor === null) errs.amount = exchangeCopy.errors.amountRequired;
     else if (minor <= 0) errs.amount = exchangeCopy.errors.amountPositive;
     else if (settlementBalance && minor > settlementBalance.balance.amountMinor) {
@@ -690,12 +688,12 @@ function ConvertOutFlow({ settlementBalance, onConversionComplete }) {
     setQuoteLoading(true);
     setError('');
     try {
-      const minor = parseMinorUnits(amountStr, 'XSD');
+      const minor = parseMinorUnits(amountStr, 'USDC');
       const q = await api.settlement.requestConversionQuote({
-        sendCurrency: 'XSD',
+        sendCurrency: 'USDC',
         receiveCurrency: currency,
         amountField: 'send',
-        amount: { amountMinor: minor, currency: 'XSD' },
+        amount: { amountMinor: minor, currency: 'USDC' },
       });
       setQuote(q);
       setQuoteExpired(false);
@@ -930,7 +928,7 @@ function ExternalPayoutFlow({ settlementBalance, onPayoutSubmitted }) {
 
   function validate() {
     const errs = {};
-    const minor = parseMinorUnits(amountStr, 'XSD');
+    const minor = parseMinorUnits(amountStr, 'USDC');
     if (minor === null) errs.amount = exchangeCopy.errors.amountRequired;
     else if (minor <= 0) errs.amount = exchangeCopy.errors.amountPositive;
     else if (settlementBalance && minor > settlementBalance.balance.amountMinor) {
@@ -948,9 +946,9 @@ function ExternalPayoutFlow({ settlementBalance, onPayoutSubmitted }) {
     setQuoteLoading(true);
     setError('');
     try {
-      const minor = parseMinorUnits(amountStr, 'XSD');
+      const minor = parseMinorUnits(amountStr, 'USDC');
       const q = await api.settlement.requestPayoutQuote({
-        amount: { amountMinor: minor, currency: 'XSD' },
+        amount: { amountMinor: minor, currency: 'USDC' },
         destinationReference: destRef.trim(),
       });
       setQuote(q);
