@@ -3,12 +3,15 @@
 import { forwardRef, useId } from 'react';
 
 export const SelectField = forwardRef(function SelectField(
-  { label, placeholder, options, error, id, className = '', defaultValue, ...rest },
+  { label, placeholder, options, error, id, className = '', defaultValue, value, ...rest },
   ref,
 ) {
   const autoId = useId();
   const fieldId = id ?? autoId;
   const errorId = error ? `${fieldId}-error` : undefined;
+  // Controlled (value+onChange) and uncontrolled (defaultValue) callers both
+  // use this field — never pass both props to the DOM element at once.
+  const valueProp = value !== undefined ? { value } : { defaultValue: defaultValue ?? '' };
 
   return (
     <div>
@@ -21,7 +24,7 @@ export const SelectField = forwardRef(function SelectField(
           ref={ref}
           aria-invalid={error ? true : undefined}
           aria-describedby={errorId}
-          defaultValue={defaultValue ?? ''}
+          {...valueProp}
           className={`w-full appearance-none rounded-sm px-3.5 py-2.5 pr-9 text-base outline-none ${className}`}
           style={{
             background: 'var(--color-surface-2)',
