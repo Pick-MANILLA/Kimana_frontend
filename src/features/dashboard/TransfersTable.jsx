@@ -15,7 +15,40 @@ export function TransfersTable({ transfers, recipientsById, customTransfers = []
   // If real API transfers are provided (e.g. from overview query), render them using standard Kimana formatting
   if (transfers && transfers.length > 0) {
     return (
-      <div className="overflow-x-auto">
+      <>
+        {/* Below sm: stacked cards — the 6-column table can't shrink to 360px
+            without either truncating data or forcing a horizontal scroll. */}
+        <div className="flex flex-col gap-3 sm:hidden">
+          {transfers.map((t) => {
+            const recipient = recipientsById?.get(t.recipientId);
+            return (
+              <div
+                key={t.id}
+                className="rounded-xl border p-3.5"
+                style={{ borderColor: 'var(--color-border-subtle)' }}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-mono text-xs font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</p>
+                    <p className="mt-1 font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{recipient?.accountName ?? '—'}</p>
+                    {recipient ? <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{countryName(recipient.country)}</p> : null}
+                  </div>
+                  <Badge tone={transferStatusTone[t.state.status]}>{transferStatusLabel[t.state.status]}</Badge>
+                </div>
+                <div className="mt-2.5 flex items-end justify-between gap-3 border-t pt-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                  <div>
+                    <p className="font-extrabold text-sm" style={{ color: 'var(--color-text-primary)' }}>{formatMoney(t.sendAmount)}</p>
+                    <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formatMoneyCompact(t.receiveAmount)}</p>
+                  </div>
+                  <p className="text-xs whitespace-nowrap" style={{ color: 'var(--color-text-secondary)' }}>{formatShortDate(t.updatedAt)}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* sm and up: full table */}
+        <div className="hidden overflow-x-auto sm:block">
         <table className="w-full min-w-[640px] border-collapse text-sm text-left">
           <thead>
             <tr className="border-b text-xs font-bold uppercase tracking-wider" style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-text-secondary)' }}>
@@ -61,7 +94,8 @@ export function TransfersTable({ transfers, recipientsById, customTransfers = []
             })}
           </tbody>
         </table>
-      </div>
+        </div>
+      </>
     );
   }
 
@@ -86,37 +120,68 @@ export function TransfersTable({ transfers, recipientsById, customTransfers = []
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[600px] border-collapse text-sm text-left">
-        <thead>
-          <tr className="border-b text-xs font-bold uppercase tracking-wider" style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-text-secondary)' }}>
-            <th className="px-3 py-2.5">Reference</th>
-            <th className="px-3 py-2.5">Beneficiary</th>
-            <th className="px-3 py-2.5">Amount</th>
-            <th className="px-3 py-2.5">Currency</th>
-            <th className="px-3 py-2.5">Status</th>
-            <th className="px-3 py-2.5">Date</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
-          {allTransfers.map((t) => (
-            <tr key={t.reference} className="transition-colors hover:bg-[var(--color-surface-2)]">
-              <td className="px-3 py-3 font-mono font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</td>
-              <td className="px-3 py-3 font-medium" style={{ color: 'var(--color-text-primary)' }}>{t.beneficiary}</td>
-              <td className="px-3 py-3 font-extrabold" style={{ color: 'var(--color-text-primary)' }}>{t.amount}</td>
-              <td className="px-3 py-3">
+    <>
+      {/* Below sm: stacked cards, matching the real-data branch above */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        {allTransfers.map((t) => (
+          <div
+            key={t.reference}
+            className="rounded-xl border p-3.5"
+            style={{ borderColor: 'var(--color-border-subtle)' }}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-mono text-xs font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</p>
+                <p className="mt-1 font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{t.beneficiary}</p>
+              </div>
+              <Badge tone={getBadgeTone(t.status)}>{t.status}</Badge>
+            </div>
+            <div className="mt-2.5 flex items-center justify-between gap-3 border-t pt-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
+              <div className="flex items-center gap-2">
+                <p className="font-extrabold text-sm" style={{ color: 'var(--color-text-primary)' }}>{t.amount}</p>
                 <span className="rounded-md px-2 py-0.5 text-xs font-semibold" style={{ backgroundColor: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
                   {t.currency}
                 </span>
-              </td>
-              <td className="px-3 py-3">
-                <Badge tone={getBadgeTone(t.status)}>{t.status}</Badge>
-              </td>
-              <td className="px-3 py-3 whitespace-nowrap text-xs" style={{ color: 'var(--color-text-secondary)' }}>{t.date}</td>
+              </div>
+              <p className="text-xs whitespace-nowrap" style={{ color: 'var(--color-text-secondary)' }}>{t.date}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* sm and up: full table */}
+      <div className="hidden overflow-x-auto sm:block">
+        <table className="w-full min-w-[600px] border-collapse text-sm text-left">
+          <thead>
+            <tr className="border-b text-xs font-bold uppercase tracking-wider" style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-text-secondary)' }}>
+              <th className="px-3 py-2.5">Reference</th>
+              <th className="px-3 py-2.5">Beneficiary</th>
+              <th className="px-3 py-2.5">Amount</th>
+              <th className="px-3 py-2.5">Currency</th>
+              <th className="px-3 py-2.5">Status</th>
+              <th className="px-3 py-2.5">Date</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
+            {allTransfers.map((t) => (
+              <tr key={t.reference} className="transition-colors hover:bg-[var(--color-surface-2)]">
+                <td className="px-3 py-3 font-mono font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</td>
+                <td className="px-3 py-3 font-medium" style={{ color: 'var(--color-text-primary)' }}>{t.beneficiary}</td>
+                <td className="px-3 py-3 font-extrabold" style={{ color: 'var(--color-text-primary)' }}>{t.amount}</td>
+                <td className="px-3 py-3">
+                  <span className="rounded-md px-2 py-0.5 text-xs font-semibold" style={{ backgroundColor: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
+                    {t.currency}
+                  </span>
+                </td>
+                <td className="px-3 py-3">
+                  <Badge tone={getBadgeTone(t.status)}>{t.status}</Badge>
+                </td>
+                <td className="px-3 py-3 whitespace-nowrap text-xs" style={{ color: 'var(--color-text-secondary)' }}>{t.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

@@ -109,9 +109,9 @@ export function NewTransferModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 py-6 bg-black/75 backdrop-blur-sm animate-fadeIn sm:items-center">
       <div
-        className="w-full max-w-2xl overflow-hidden rounded-2xl border shadow-2xl transition-all"
+        className="flex w-full max-w-2xl max-h-full flex-col overflow-hidden rounded-2xl border shadow-2xl transition-all"
         style={{
           backgroundColor: 'var(--color-surface-1)',
           borderColor: 'var(--color-border-subtle)',
@@ -120,7 +120,7 @@ export function NewTransferModal({
       >
         {/* Modal Header */}
         <div
-          className="flex items-center justify-between border-b px-6 py-4"
+          className="flex shrink-0 items-center justify-between border-b px-6 py-4"
           style={{
             backgroundColor: 'var(--color-surface-2)',
             borderColor: 'var(--color-border-subtle)',
@@ -144,7 +144,7 @@ export function NewTransferModal({
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 sm:p-8">
+        <div className="overflow-y-auto p-6 sm:p-8">
           {/* STEP 1: RECIPIENT */}
           {step === 1 && (
             <div className="space-y-5">

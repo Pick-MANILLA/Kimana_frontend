@@ -73,7 +73,7 @@ function ProfileSection() {
 
   return (
     <div
-      className="rounded-2xl border p-6"
+      className="rounded-2xl border p-4 sm:p-6"
       style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}
     >
       <h2 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>
@@ -163,7 +163,7 @@ function NotificationsSection() {
 
   return (
     <div
-      className="rounded-2xl border p-6"
+      className="rounded-2xl border p-4 sm:p-6"
       style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}
     >
       <h2 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>
@@ -173,7 +173,36 @@ function NotificationsSection() {
         {copy.sectionSubtitle}
       </p>
 
-      <div className="mt-6 overflow-x-auto">
+      {/* Below sm: stacked cards, each channel toggle laid out inline — avoids
+          horizontal scrolling to reach a basic on/off control. */}
+      <div className="mt-6 flex flex-col gap-3 sm:hidden">
+        {events.map(({ id: eventId, label: eventLabel }) => (
+          <div
+            key={eventId}
+            className="rounded-xl p-3.5"
+            style={{ backgroundColor: 'var(--color-surface-2)' }}
+          >
+            <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+              {eventLabel}
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+              {channels.map(({ id: channelId, label: channelLabel }) => (
+                <label key={channelId} className="flex items-center gap-2 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+                  <ToggleSwitch
+                    checked={prefs[eventId][channelId]}
+                    onChange={() => toggle(eventId, channelId)}
+                    label={`${eventLabel} via ${channelId}`}
+                  />
+                  {channelLabel}
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* sm and up: full comparison table */}
+      <div className="mt-6 hidden overflow-x-auto sm:block">
         <table className="w-full min-w-[28rem] border-collapse text-sm">
           <thead>
             <tr>
@@ -254,7 +283,7 @@ function DefaultsSection() {
 
   return (
     <div
-      className="rounded-2xl border p-6"
+      className="rounded-2xl border p-4 sm:p-6"
       style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}
     >
       <h2 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>
@@ -324,7 +353,7 @@ function SecuritySection() {
 
       {/* 2FA placeholder card */}
       <div
-        className="rounded-2xl border p-6"
+        className="rounded-2xl border p-4 sm:p-6"
         style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -386,7 +415,7 @@ function ChangePasswordForm({ copy }) {
 
   return (
     <div
-      className="rounded-2xl border p-6"
+      className="rounded-2xl border p-4 sm:p-6"
       style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}
     >
       <h3 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>
@@ -443,7 +472,7 @@ function AppearanceSection() {
 
   return (
     <div
-      className="rounded-2xl border p-6"
+      className="rounded-2xl border p-4 sm:p-6"
       style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}
     >
       <h2 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>

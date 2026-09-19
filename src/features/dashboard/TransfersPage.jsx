@@ -722,9 +722,12 @@ export function TransfersPage({ onNewTransfer }) {
           )}
         </div>
 
-        {/* Row 2: status / currency / dates / amounts */}
-        <div className="flex flex-wrap gap-3">
-          <div className="w-44">
+        {/* Row 2: status / currency / dates / amounts.
+            Two-up grid below sm (each field fills its cell, no wasted
+            whitespace or scroll needed); reverts to fixed-width flex-wrap
+            chips once there's room for them to sit inline. */}
+        <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+          <div className="w-full sm:w-44">
             <SelectField
               label=""
               options={STATUS_OPTIONS}
@@ -735,7 +738,7 @@ export function TransfersPage({ onNewTransfer }) {
             />
           </div>
 
-          <div className="w-40">
+          <div className="w-full sm:w-40">
             <SelectField
               label=""
               options={CURRENCY_OPTIONS}
@@ -746,7 +749,7 @@ export function TransfersPage({ onNewTransfer }) {
             />
           </div>
 
-          <div className="w-40">
+          <div className="w-full sm:w-40">
             <TextField
               label=""
               type="date"
@@ -756,7 +759,7 @@ export function TransfersPage({ onNewTransfer }) {
             />
           </div>
 
-          <div className="w-40">
+          <div className="w-full sm:w-40">
             <TextField
               label=""
               type="date"
@@ -766,7 +769,7 @@ export function TransfersPage({ onNewTransfer }) {
             />
           </div>
 
-          <div className="w-36">
+          <div className="w-full sm:w-36">
             <TextField
               label=""
               type="number"
@@ -779,7 +782,7 @@ export function TransfersPage({ onNewTransfer }) {
             />
           </div>
 
-          <div className="w-36">
+          <div className="w-full sm:w-36">
             <TextField
               label=""
               type="number"
@@ -802,7 +805,7 @@ export function TransfersPage({ onNewTransfer }) {
           borderColor: 'var(--color-border-subtle)',
         }}
       >
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {isFirstLoad && <TableSkeleton />}
 
           {transfersError && <ErrorState onRetry={refetchTransfers} />}
@@ -813,7 +816,60 @@ export function TransfersPage({ onNewTransfer }) {
 
           {!isFirstLoad && !transfersError && !isEmpty && !isNoMatch && (
             <>
-              <div className="overflow-x-auto">
+              {/* Below sm: stacked cards — a 6-column table can't shrink to
+                  360px without truncating data or forcing a horizontal scroll. */}
+              <div className="flex flex-col gap-3 sm:hidden">
+                {pageSlice.map((t) => {
+                  const recipient = recipientsById?.get(t.recipientId);
+                  const isSelected = selectedTransfer?.id === t.id;
+                  return (
+                    <div
+                      key={t.id}
+                      onClick={() => setSelectedTransfer(t)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedTransfer(t);
+                        }
+                      }}
+                      tabIndex={0}
+                      role="button"
+                      aria-pressed={isSelected}
+                      className="rounded-xl border p-3.5 cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
+                      style={{
+                        borderColor: 'var(--color-border-subtle)',
+                        background: isSelected ? 'var(--color-surface-2)' : 'transparent',
+                      }}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-mono text-xs font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</p>
+                          <p className="mt-1 font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{recipient?.accountName ?? '—'}</p>
+                          {recipient?.country && (
+                            <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{countryName(recipient.country)}</p>
+                          )}
+                        </div>
+                        <Badge tone={transferStatusTone[t.state.status]}>{transferStatusLabel[t.state.status]}</Badge>
+                      </div>
+
+                      {t.tradeDescription && (
+                        <p className="mt-2 text-xs line-clamp-2" style={{ color: 'var(--color-text-secondary)' }}>{t.tradeDescription}</p>
+                      )}
+
+                      <div className="mt-2.5 flex items-end justify-between gap-3 border-t pt-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                        <div>
+                          <p className="font-extrabold text-sm" style={{ color: 'var(--color-text-primary)' }}>{formatMoney(t.sendAmount)}</p>
+                          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formatMoneyCompact(t.receiveAmount)}</p>
+                        </div>
+                        <p className="text-xs whitespace-nowrap" style={{ color: 'var(--color-text-secondary)' }}>{formatShortDate(t.updatedAt)}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* sm and up: full table */}
+              <div className="hidden overflow-x-auto sm:block">
                 <table className="w-full min-w-[680px] border-collapse text-sm">
                   <thead>
                     <tr

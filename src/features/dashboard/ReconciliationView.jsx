@@ -21,8 +21,8 @@ export function ReconciliationView() {
         <Badge tone="success">0 Discrepancies Found</Badge>
       </div>
 
-      <div className="rounded-2xl border p-6 shadow-xl" style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}>
-        <div className="flex items-center justify-between pb-4 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+      <div className="rounded-2xl border p-4 sm:p-6 shadow-xl" style={{ backgroundColor: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}>
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
           <div className="flex items-center gap-2">
             <ShieldIcon size={20} color="var(--color-brand-400)" />
             <h3 className="text-base font-bold" style={{ color: 'var(--color-text-primary)' }}>Reconciliation Packet Ledger</h3>
@@ -46,7 +46,33 @@ export function ReconciliationView() {
           </div>
         </div>
 
-        <div className="mt-4 overflow-x-auto">
+        {/* Below sm: stacked cards — avoids squeezing a 5-column table into 360px */}
+        <div className="mt-4 flex flex-col gap-3 sm:hidden">
+          {RECONCILIATION_RECORDS.map((row) => (
+            <div
+              key={row.ref}
+              className="rounded-xl border p-3.5"
+              style={{ borderColor: 'var(--color-border-subtle)' }}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-mono text-xs font-bold" style={{ color: 'var(--color-brand-400)' }}>{row.ref}</p>
+                  <p className="mt-1 font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{row.beneficiary}</p>
+                </div>
+                <span className="text-xs font-semibold text-emerald-400 whitespace-nowrap">{row.status}</span>
+              </div>
+              <div className="mt-2.5 flex items-center justify-between gap-3 border-t pt-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                <p className="font-bold text-sm" style={{ color: 'var(--color-text-primary)' }}>{row.amount}</p>
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                  <CheckCircleIcon size={12} color="var(--color-success)" /> {row.recStatus}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* sm and up: full table */}
+        <div className="mt-4 hidden overflow-x-auto sm:block">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
               <tr className="border-b text-xs font-semibold uppercase tracking-wider text-neutral-400" style={{ borderColor: 'var(--color-border-subtle)' }}>
