@@ -66,16 +66,16 @@ export function HeroProductPreview() {
               <Badge tone="info">Active Account</Badge>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <div className="rounded-xl p-4 border" style={{ backgroundColor: 'var(--color-surface-2)', borderColor: 'var(--color-border-subtle)' }}>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="min-w-0 rounded-xl p-4 border" style={{ backgroundColor: 'var(--color-surface-2)', borderColor: 'var(--color-border-subtle)' }}>
                 <span className="text-xs font-semibold text-neutral-400">Available NGN</span>
-                <div className="mt-1 text-xl sm:text-2xl font-extrabold" style={{ color: 'var(--color-text-primary)' }}>
+                <div className="mt-1 truncate text-lg sm:text-xl lg:text-2xl font-extrabold" style={{ color: 'var(--color-text-primary)' }}>
                   ₦12,450,000<span className="text-xs font-medium text-neutral-400">.00</span>
                 </div>
               </div>
-              <div className="rounded-xl p-4 border" style={{ backgroundColor: 'var(--color-surface-2)', borderColor: 'var(--color-border-subtle)' }}>
+              <div className="min-w-0 rounded-xl p-4 border" style={{ backgroundColor: 'var(--color-surface-2)', borderColor: 'var(--color-border-subtle)' }}>
                 <span className="text-xs font-semibold text-neutral-400">Available USD</span>
-                <div className="mt-1 text-xl sm:text-2xl font-extrabold" style={{ color: 'var(--color-text-primary)' }}>
+                <div className="mt-1 truncate text-lg sm:text-xl lg:text-2xl font-extrabold" style={{ color: 'var(--color-text-primary)' }}>
                   $25,000<span className="text-xs font-medium text-neutral-400">.00</span>
                 </div>
               </div>
@@ -157,8 +157,8 @@ export function HeroProductPreview() {
               borderColor: 'var(--color-border-subtle)',
             }}
           >
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
                 <span className="text-xs font-mono font-semibold text-neutral-400">
                   Ref: TRX-2026-10492
                 </span>
@@ -171,7 +171,7 @@ export function HeroProductPreview() {
 
             {/* Progress Timeline Bar */}
             <div className="mt-5">
-              <div className="flex justify-between text-[11px] font-semibold">
+              <div className="flex flex-wrap justify-between gap-x-3 gap-y-1 text-[10px] sm:text-[11px] font-semibold">
                 <span className="text-emerald-400">Quote</span>
                 <span className="text-emerald-400">Screened</span>
                 <span className="text-emerald-400">Funded</span>

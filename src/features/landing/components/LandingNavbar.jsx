@@ -35,7 +35,7 @@ export function LandingNavbar() {
         </Link>
 
         {/* Center: Navigation links */}
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-6 lg:flex">
           <button
             type="button"
             onClick={() => handleNavClick('product')}
@@ -79,7 +79,7 @@ export function LandingNavbar() {
         </nav>
 
         {/* Right: Actions */}
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           <ThemeToggle />
           <Link
             href="/login"
@@ -94,7 +94,7 @@ export function LandingNavbar() {
         </div>
 
         {/* Mobile menu trigger */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle size={34} />
           <button
             type="button"
@@ -115,7 +115,7 @@ export function LandingNavbar() {
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div
-          className="border-b px-6 py-6 md:hidden"
+          className="border-b px-6 py-6 lg:hidden"
           style={{
             backgroundColor: 'var(--color-surface-1)',
             borderColor: 'var(--color-border-subtle)',

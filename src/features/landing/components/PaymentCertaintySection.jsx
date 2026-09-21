@@ -165,8 +165,8 @@ export function PaymentCertaintySection() {
                 borderColor: 'var(--color-border-subtle)',
               }}
             >
-              <div className="flex items-center justify-between border-b pb-4" style={{ borderColor: 'var(--color-border-subtle)' }}>
-                <div className="flex items-center gap-3">
+              <div className="flex flex-col items-start gap-3 border-b pb-4 sm:flex-row sm:items-center sm:justify-between" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                <div className="flex flex-wrap items-center gap-3">
                   <span className="text-2xl font-bold" style={{ color: 'var(--color-brand-400)' }}>
                     Stage {selectedStage.stepNumber}
                   </span>
@@ -174,7 +174,7 @@ export function PaymentCertaintySection() {
                     {selectedStage.title} State
                   </h3>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                <div className="flex shrink-0 items-center gap-1.5 text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
                   <CheckCircleIcon size={14} color="var(--color-success)" /> Verified Lifecycle State
                 </div>
               </div>
