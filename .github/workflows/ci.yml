@@ -1,0 +1,77 @@
+name: Frontend CI & Security
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # 1. Supply Chain Security Audit
+  security-audit:
+    name: Supply Chain Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run NPM Audit
+        run: npm audit --audit-level=high
+
+      - name: Verify No Leaked Secrets in NEXT_PUBLIC_ Variables
+        run: |
+          echo "Scanning for sensitive patterns in NEXT_PUBLIC_ variables..."
+          if grep -rn "NEXT_PUBLIC_.*\(KEY\|SECRET\|PASSWORD\|PRIVATE\|DATABASE_URL\)" app/ src/ 2>/dev/null; then
+            echo "ERROR: Potential secret exposure in NEXT_PUBLIC_ environment variable."
+            exit 1
+          fi
+          echo "No sensitive secrets detected in client environment variables."
+
+  # 2. Syntax, Linter & Static Analysis
+  lint:
+    name: Oxlint & Syntax Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: Kimana_frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Oxlint Linter
+        run: npx oxlint
+
+  # 3. Next.js Production Build Verification
+  build:
+    name: Next.js Production Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: Kimana_frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Next.js Application
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
