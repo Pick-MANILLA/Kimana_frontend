@@ -1,186 +1,133 @@
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
+import { ExclamationTriangleIcon } from '../../components/ui/icons';
 import { dashboardCopy, transferStatusLabel } from '../../copy';
 import { countryName, formatShortDate } from '../../lib/formatDate';
 import { formatMoney, formatMoneyCompact } from '../../money/money';
 import { transferStatusTone } from '../../state/transferStatusColor';
 
-const DEFAULT_DEMO_TRANSFERS = [
-  { reference: 'TXN-8844', beneficiary: 'Amsterdam Commodities BV', amount: '$45,000.00', currency: 'USD', status: 'Completed', date: 'Aug 27' },
-  { reference: 'TXN-8843', beneficiary: 'Kerala Spices Corp', amount: '$18,500.00', currency: 'USD', status: 'Paying out', date: 'Aug 27' },
-  { reference: 'TXN-8842', beneficiary: 'Naturalia Foods GmbH', amount: '$22,000.00', currency: 'USD', status: 'Screened', date: 'Aug 26' },
-  { reference: 'TXN-8841', beneficiary: 'Rotterdam Grain Exchange', amount: '$78,000.00', currency: 'USD', status: 'Completed', date: 'Aug 25' },
-];
-
-export function TransfersTable({ transfers, recipientsById, customTransfers = [] }) {
-  // If real API transfers are provided (e.g. from overview query), render them using standard Kimana formatting
-  if (transfers && transfers.length > 0) {
+export function TransfersTable({ transfers, recipientsById, isLoading, isError, onRetry }) {
+  if (isLoading) {
     return (
-      <>
-        {/* Below sm: stacked cards — the 6-column table can't shrink to 360px
-            without either truncating data or forcing a horizontal scroll. */}
-        <div className="flex flex-col gap-3 sm:hidden">
-          {transfers.map((t) => {
-            const recipient = recipientsById?.get(t.recipientId);
-            return (
-              <div
-                key={t.id}
-                className="rounded-xl border p-3.5"
-                style={{ borderColor: 'var(--color-border-subtle)' }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-mono text-xs font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</p>
-                    <p className="mt-1 font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{recipient?.accountName ?? '—'}</p>
-                    {recipient ? <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{countryName(recipient.country)}</p> : null}
-                  </div>
-                  <Badge tone={transferStatusTone[t.state.status]}>{transferStatusLabel[t.state.status]}</Badge>
-                </div>
-                <div className="mt-2.5 flex items-end justify-between gap-3 border-t pt-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
-                  <div>
-                    <p className="font-extrabold text-sm" style={{ color: 'var(--color-text-primary)' }}>{formatMoney(t.sendAmount)}</p>
-                    <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formatMoneyCompact(t.receiveAmount)}</p>
-                  </div>
-                  <p className="text-xs whitespace-nowrap" style={{ color: 'var(--color-text-secondary)' }}>{formatShortDate(t.updatedAt)}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* sm and up: full table */}
-        <div className="hidden overflow-x-auto sm:block">
-        <table className="w-full min-w-[640px] border-collapse text-sm text-left">
-          <thead>
-            <tr className="border-b text-xs font-bold uppercase tracking-wider" style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-text-secondary)' }}>
-              {[
-                dashboardCopy.table.reference,
-                dashboardCopy.table.beneficiary,
-                dashboardCopy.table.amount,
-                dashboardCopy.table.rate,
-                dashboardCopy.table.status,
-                dashboardCopy.table.date,
-              ].map((heading) => (
-                <th key={heading} className="px-3 py-2 text-left text-xs font-medium tracking-wide uppercase" style={{ color: 'var(--color-text-secondary)' }}>
-                  {heading}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
-            {transfers.map((t) => {
-              const recipient = recipientsById?.get(t.recipientId);
-              return (
-                <tr key={t.id} className="transition-colors hover:bg-[var(--color-surface-2)]">
-                  <td className="px-3 py-3">
-                    <p className="font-mono font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</p>
-                  </td>
-                  <td className="px-3 py-3">
-                    <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{recipient?.accountName ?? '—'}</p>
-                    {recipient ? <p className="mt-0.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>{countryName(recipient.country)}</p> : null}
-                  </td>
-                  <td className="px-3 py-3">
-                    <p className="font-extrabold" style={{ color: 'var(--color-text-primary)' }}>{formatMoney(t.sendAmount)}</p>
-                    <p className="mt-0.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formatMoneyCompact(t.receiveAmount)}</p>
-                  </td>
-                  <td className="px-3 py-3" style={{ color: 'var(--color-text-primary)' }}>
-                    {t.quote.breakdown.rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </td>
-                  <td className="px-3 py-3">
-                    <Badge tone={transferStatusTone[t.state.status]}>{transferStatusLabel[t.state.status]}</Badge>
-                  </td>
-                  <td className="px-3 py-3 whitespace-nowrap text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formatShortDate(t.updatedAt)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        </div>
-      </>
+      <div className="space-y-3">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="h-14 animate-pulse rounded-md" style={{ background: 'var(--color-surface-2)' }} />
+        ))}
+      </div>
     );
   }
 
-  // Otherwise render MVP demo records (with newly added custom transfers prepended)
-  const allTransfers = [...customTransfers, ...DEFAULT_DEMO_TRANSFERS];
+  if (isError) {
+    return (
+      <div
+        className="my-4 rounded-xl border p-8 text-center"
+        style={{ borderColor: 'var(--color-danger)', background: 'color-mix(in srgb, var(--color-danger) 8%, transparent)' }}
+      >
+        <ExclamationTriangleIcon size={28} color="var(--color-danger)" />
+        <p className="mt-3 font-semibold" style={{ color: 'var(--color-danger)' }}>Unable to load transfer history</p>
+        <p className="mt-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+          A connection issue prevented retrieving your ledger records.
+        </p>
+        {onRetry ? (
+          <Button type="button" className="mt-4" variant="outline" onClick={onRetry}>
+            Retry Connection
+          </Button>
+        ) : null}
+      </div>
+    );
+  }
 
-  const getBadgeTone = (status) => {
-    switch (status.toLowerCase()) {
-      case 'completed':
-      case 'settled':
-        return 'success';
-      case 'paying out':
-      case 'settling':
-      case 'in progress':
-        return 'info';
-      case 'screened':
-      case 'quoted':
-        return 'warning';
-      default:
-        return 'info';
-    }
-  };
+  if (!transfers || transfers.length === 0) {
+    return (
+      <div className="my-4 rounded-xl border border-dashed p-8 text-center" style={{ borderColor: 'var(--color-border-subtle)' }}>
+        <p className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>No transfers recorded yet</p>
+        <p className="mt-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+          Your initiated cross-border payouts will appear here in real time.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* Below sm: stacked cards, matching the real-data branch above */}
+      {/* Below sm: stacked cards — the 6-column table can't shrink to 360px
+          without either truncating data or forcing a horizontal scroll. */}
       <div className="flex flex-col gap-3 sm:hidden">
-        {allTransfers.map((t) => (
-          <div
-            key={t.reference}
-            className="rounded-xl border p-3.5"
-            style={{ borderColor: 'var(--color-border-subtle)' }}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-mono text-xs font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</p>
-                <p className="mt-1 font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{t.beneficiary}</p>
+        {transfers.map((t) => {
+          const recipient = recipientsById?.get(t.recipientId);
+          return (
+            <div
+              key={t.id}
+              className="rounded-xl border p-3.5"
+              style={{ borderColor: 'var(--color-border-subtle)' }}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-mono text-xs font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</p>
+                  <p className="mt-1 font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{recipient?.accountName ?? '—'}</p>
+                  {recipient ? <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{countryName(recipient.country)}</p> : null}
+                </div>
+                <Badge tone={transferStatusTone[t.state.status]}>{transferStatusLabel[t.state.status]}</Badge>
               </div>
-              <Badge tone={getBadgeTone(t.status)}>{t.status}</Badge>
-            </div>
-            <div className="mt-2.5 flex items-center justify-between gap-3 border-t pt-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
-              <div className="flex items-center gap-2">
-                <p className="font-extrabold text-sm" style={{ color: 'var(--color-text-primary)' }}>{t.amount}</p>
-                <span className="rounded-md px-2 py-0.5 text-xs font-semibold" style={{ backgroundColor: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
-                  {t.currency}
-                </span>
+              <div className="mt-2.5 flex items-end justify-between gap-3 border-t pt-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                <div>
+                  <p className="font-extrabold text-sm" style={{ color: 'var(--color-text-primary)' }}>{formatMoney(t.sendAmount)}</p>
+                  <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formatMoneyCompact(t.receiveAmount)}</p>
+                </div>
+                <p className="text-xs whitespace-nowrap" style={{ color: 'var(--color-text-secondary)' }}>{formatShortDate(t.updatedAt)}</p>
               </div>
-              <p className="text-xs whitespace-nowrap" style={{ color: 'var(--color-text-secondary)' }}>{t.date}</p>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* sm and up: full table */}
       <div className="hidden overflow-x-auto sm:block">
-        <table className="w-full min-w-[600px] border-collapse text-sm text-left">
-          <thead>
-            <tr className="border-b text-xs font-bold uppercase tracking-wider" style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-text-secondary)' }}>
-              <th className="px-3 py-2.5">Reference</th>
-              <th className="px-3 py-2.5">Beneficiary</th>
-              <th className="px-3 py-2.5">Amount</th>
-              <th className="px-3 py-2.5">Currency</th>
-              <th className="px-3 py-2.5">Status</th>
-              <th className="px-3 py-2.5">Date</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
-            {allTransfers.map((t) => (
-              <tr key={t.reference} className="transition-colors hover:bg-[var(--color-surface-2)]">
-                <td className="px-3 py-3 font-mono font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</td>
-                <td className="px-3 py-3 font-medium" style={{ color: 'var(--color-text-primary)' }}>{t.beneficiary}</td>
-                <td className="px-3 py-3 font-extrabold" style={{ color: 'var(--color-text-primary)' }}>{t.amount}</td>
-                <td className="px-3 py-3">
-                  <span className="rounded-md px-2 py-0.5 text-xs font-semibold" style={{ backgroundColor: 'var(--color-surface-2)', color: 'var(--color-text-secondary)' }}>
-                    {t.currency}
-                  </span>
-                </td>
-                <td className="px-3 py-3">
-                  <Badge tone={getBadgeTone(t.status)}>{t.status}</Badge>
-                </td>
-                <td className="px-3 py-3 whitespace-nowrap text-xs" style={{ color: 'var(--color-text-secondary)' }}>{t.date}</td>
-              </tr>
+      <table className="w-full min-w-[640px] border-collapse text-sm text-left">
+        <thead>
+          <tr className="border-b text-xs font-bold uppercase tracking-wider" style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-text-secondary)' }}>
+            {[
+              dashboardCopy.table.reference,
+              dashboardCopy.table.beneficiary,
+              dashboardCopy.table.amount,
+              dashboardCopy.table.rate,
+              dashboardCopy.table.status,
+              dashboardCopy.table.date,
+            ].map((heading) => (
+              <th key={heading} className="px-3 py-2 text-left text-xs font-medium tracking-wide uppercase" style={{ color: 'var(--color-text-secondary)' }}>
+                {heading}
+              </th>
             ))}
-          </tbody>
-        </table>
+          </tr>
+        </thead>
+        <tbody className="divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
+          {transfers.map((t) => {
+            const recipient = recipientsById?.get(t.recipientId);
+            return (
+              <tr key={t.id} className="transition-colors hover:bg-[var(--color-surface-2)]">
+                <td className="px-3 py-3">
+                  <p className="font-mono font-bold" style={{ color: 'var(--color-brand-600)' }}>{t.reference}</p>
+                </td>
+                <td className="px-3 py-3">
+                  <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{recipient?.accountName ?? '—'}</p>
+                  {recipient ? <p className="mt-0.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>{countryName(recipient.country)}</p> : null}
+                </td>
+                <td className="px-3 py-3">
+                  <p className="font-extrabold" style={{ color: 'var(--color-text-primary)' }}>{formatMoney(t.sendAmount)}</p>
+                  <p className="mt-0.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formatMoneyCompact(t.receiveAmount)}</p>
+                </td>
+                <td className="px-3 py-3" style={{ color: 'var(--color-text-primary)' }}>
+                  {t.quote.breakdown.rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </td>
+                <td className="px-3 py-3">
+                  <Badge tone={transferStatusTone[t.state.status]}>{transferStatusLabel[t.state.status]}</Badge>
+                </td>
+                <td className="px-3 py-3 whitespace-nowrap text-xs" style={{ color: 'var(--color-text-secondary)' }}>{formatShortDate(t.updatedAt)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
       </div>
     </>
   );

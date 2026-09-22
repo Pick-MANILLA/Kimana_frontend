@@ -130,7 +130,13 @@ export function ProductCenterpieceSection() {
                 </div>
 
                 <div className="mt-4">
-                  <TransfersTable transfers={transfersQuery.data ?? []} recipientsById={recipientsById} />
+                  <TransfersTable
+                    transfers={transfersQuery.data ?? []}
+                    recipientsById={recipientsById}
+                    isLoading={transfersQuery.isLoading}
+                    isError={transfersQuery.isError}
+                    onRetry={() => transfersQuery.refetch()}
+                  />
                 </div>
               </div>
             </div>
