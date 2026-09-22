@@ -1,7 +1,9 @@
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
+import { ToastProvider } from '../src/components/ui/Toast';
+import { toast } from '../src/hooks/useToast';
 
 export function Providers({ children }) {
   const [queryClient] = useState(
@@ -13,8 +15,17 @@ export function Providers({ children }) {
             staleTime: 30_000,
           },
         },
+        mutationCache: new MutationCache({
+          onError: (error) => {
+            toast.error(error?.message || 'An unexpected error occurred. Please try again.');
+          },
+        }),
       }),
   );
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ToastProvider>{children}</ToastProvider>
+    </QueryClientProvider>
+  );
 }

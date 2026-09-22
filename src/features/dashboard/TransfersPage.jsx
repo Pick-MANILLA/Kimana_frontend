@@ -16,7 +16,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { api, DEMO_CUSTOMER_ID } from '../../api';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
@@ -37,6 +37,7 @@ import {
   transferStatusLabel,
   transfersPageCopy,
 } from '../../copy';
+import { toast } from '../../hooks/useToast';
 import { countryName, formatShortDate } from '../../lib/formatDate';
 import { formatMoney, formatMoneyCompact } from '../../money/money';
 import { isTerminalStatus, transferStatusTone } from '../../state/transferStatusColor';
@@ -538,42 +539,6 @@ function TimelinePanel({ transfer, recipientsById, onClose }) {
 }
 
 // ---------------------------------------------------------------------------
-// Export toast
-// ---------------------------------------------------------------------------
-
-function ExportToast({ onDismiss }) {
-  // Auto-dismiss after 5 s.
-  useEffect(() => {
-    const id = setTimeout(onDismiss, 5000);
-    return () => clearTimeout(id);
-  }, [onDismiss]);
-
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-xl px-5 py-3 shadow-2xl border text-sm font-medium"
-      style={{
-        background: 'var(--color-surface-1)',
-        borderColor: 'var(--color-border-subtle)',
-        color: 'var(--color-text-primary)',
-      }}
-    >
-      <CheckCircleIcon size={16} color="var(--color-success)" />
-      <span>{transfersPageCopy.exportToast}</span>
-      <button
-        type="button"
-        onClick={onDismiss}
-        aria-label="Dismiss"
-        className="ml-2 opacity-60 hover:opacity-100 focus-visible:outline-2"
-      >
-        <XIcon size={14} color="currentColor" />
-      </button>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
@@ -581,8 +546,6 @@ export function TransfersPage({ onNewTransfer }) {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [page, setPage] = useState(1);
   const [selectedTransfer, setSelectedTransfer] = useState(null);
-  const [exportLoading, setExportLoading] = useState(false);
-  const [showExportToast, setShowExportToast] = useState(false);
 
   // Fetch all transfers for this customer.
   const {
@@ -627,18 +590,10 @@ export function TransfersPage({ onNewTransfer }) {
     setPage(1);
   }
 
-  async function handleExport() {
-    setExportLoading(true);
-    try {
-      await api.ledger.requestStatementExport(DEMO_CUSTOMER_ID);
-      setShowExportToast(true);
-    } catch (_) {
-      // Even on mock error, show the toast — it's a placeholder.
-      setShowExportToast(true);
-    } finally {
-      setExportLoading(false);
-    }
-  }
+  const exportMutation = useMutation({
+    mutationFn: () => api.ledger.requestStatementExport(DEMO_CUSTOMER_ID),
+    onSuccess: () => toast.success(transfersPageCopy.exportToast),
+  });
 
   const isFirstLoad = transfersLoading && !allTransfers;
   const isEmpty = !transfersLoading && !transfersError && allTransfers?.length === 0;
@@ -663,17 +618,17 @@ export function TransfersPage({ onNewTransfer }) {
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
-            onClick={handleExport}
-            disabled={exportLoading}
+            onClick={() => exportMutation.mutate()}
+            disabled={exportMutation.isPending}
             className="flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-semibold transition-opacity disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{
               background: 'var(--color-surface-1)',
               borderColor: 'var(--color-border-subtle)',
               color: 'var(--color-text-secondary)',
-              cursor: exportLoading ? 'not-allowed' : 'pointer',
+              cursor: exportMutation.isPending ? 'not-allowed' : 'pointer',
             }}
           >
-            {exportLoading
+            {exportMutation.isPending
               ? <SpinnerIcon size={13} color="currentColor" />
               : <DownloadIcon size={13} color="currentColor" />}
             {transfersPageCopy.exportBtn}
@@ -1024,11 +979,6 @@ export function TransfersPage({ onNewTransfer }) {
           recipientsById={recipientsById}
           onClose={() => setSelectedTransfer(null)}
         />
-      )}
-
-      {/* ── Export toast ─────────────────────────────────────────── */}
-      {showExportToast && (
-        <ExportToast onDismiss={() => setShowExportToast(false)} />
       )}
     </div>
   );
