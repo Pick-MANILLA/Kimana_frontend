@@ -24,7 +24,6 @@ import { LogoWithWordmark } from '../../components/ui/Logo';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import {
   ArrowLeftIcon,
-  ArrowRightIcon,
   CheckCircleIcon,
   ClockIcon,
   LogOutIcon,
@@ -64,16 +63,11 @@ function formatTimer(ms) {
 }
 
 /** Parse a decimal string from a text field to minor-unit integer. */
-function parseMinorUnits(str, currency) {
+function parseMinorUnits(str, _currency) {
   const cleaned = str.replace(/[^0-9.]/g, '');
   const major = parseFloat(cleaned);
   if (!isFinite(major) || major <= 0) return null;
   return Math.round(major * 100);
-}
-
-/** Convert minor units to a display string for pre-filling inputs. */
-function minorToDisplayString(amountMinor) {
-  return (amountMinor / 100).toFixed(2);
 }
 
 function generateIdempotencyKey() {
@@ -400,7 +394,7 @@ function PayoutHistoryTable({ payouts }) {
 // Flow: Convert local → settlement  (to_settlement)
 // ---------------------------------------------------------------------------
 
-function ConvertInFlow({ settlementBalance, localBalances, onConversionComplete }) {
+function ConvertInFlow({ localBalances, onConversionComplete }) {
   const [step, setStep] = useState('form'); // 'form' | 'quote' | 'success'
   const [currency, setCurrency] = useState('');
   const [amountStr, setAmountStr] = useState('');
@@ -417,6 +411,7 @@ function ConvertInFlow({ settlementBalance, localBalances, onConversionComplete 
 
   // Fetch indicative rate whenever currency changes.
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- kicks off an async rate fetch keyed on `currency`; the early return clears a stale rate synchronously rather than showing it while a new one loads.
     if (!currency) { setIndicativeRate(null); return; }
     let cancelled = false;
     setRateLoading(true);
@@ -668,6 +663,7 @@ function ConvertOutFlow({ settlementBalance, onConversionComplete }) {
   const [quoteExpired, setQuoteExpired] = useState(false);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- kicks off an async rate fetch keyed on `currency`; the early return clears a stale rate synchronously rather than showing it while a new one loads.
     if (!currency) { setIndicativeRate(null); return; }
     let cancelled = false;
     setRateLoading(true);
@@ -915,7 +911,7 @@ function ExternalPayoutFlow({ settlementBalance, onPayoutSubmitted }) {
           clearInterval(tickerRef.current);
           tickerRef.current = null;
         }
-      } catch (_) {
+      } catch {
         // Non-fatal — ticker will retry next interval.
       }
     }, 2500);
@@ -927,6 +923,7 @@ function ExternalPayoutFlow({ settlementBalance, onPayoutSubmitted }) {
   // Load payout history when entering tracking step.
   useEffect(() => {
     if (step !== 'tracking') return;
+    // oxlint-disable-next-line react/set-state-in-effect -- sets the loading flag before kicking off the async payout-history fetch below.
     setPayoutsLoading(true);
     api.settlement.listPayouts()
       .then(setPayouts)
@@ -1221,6 +1218,7 @@ export function ExchangePage() {
   }
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- sets loading/error flags before kicking off the async balance fetch below.
     setBalanceLoading(true);
     setBalanceError('');
     Promise.all([

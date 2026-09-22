@@ -40,6 +40,7 @@ export function useNotificationPrefs() {
   const [prefs, setPrefs] = useState(DEFAULT_PREFS);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- localStorage isn't available during SSR; state must start at DEFAULT_PREFS and sync here post-mount to avoid a hydration mismatch.
     setPrefs(readStoredPrefs());
   }, []);
 
