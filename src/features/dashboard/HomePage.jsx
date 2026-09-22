@@ -290,23 +290,13 @@ export function HomePage() {
                     </div>
 
                     <div className="mt-4">
-                      {transfersQuery.isLoading ? (
-                        <div className="space-y-3">
-                          {[0, 1, 2].map((i) => (
-                            <div key={i} className="h-14 animate-pulse rounded-md" style={{ background: 'var(--color-surface-2)' }} />
-                          ))}
-                        </div>
-                      ) : transfersQuery.isError ? (
-                        <p className="text-sm" style={{ color: 'var(--color-danger)' }}>
-                          {transfersQuery.error?.message || 'We couldn’t load your transfers. Check your connection and try again.'}
-                        </p>
-                      ) : recentTransfers.length === 0 ? (
-                        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                          No transfers yet — start your first cross-border payment to see it here.
-                        </p>
-                      ) : (
-                        <TransfersTable transfers={recentTransfers} recipientsById={recipientsById} />
-                      )}
+                      <TransfersTable
+                        transfers={recentTransfers}
+                        recipientsById={recipientsById}
+                        isLoading={transfersQuery.isLoading}
+                        isError={transfersQuery.isError}
+                        onRetry={() => transfersQuery.refetch()}
+                      />
                     </div>
                   </div>
                 </div>
