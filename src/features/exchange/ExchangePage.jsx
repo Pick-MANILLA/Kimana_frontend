@@ -12,8 +12,10 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { api } from '../../api';
+import { sessionQueryKey } from '../auth/useSession';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { SelectField } from '../../components/ui/SelectField';
@@ -85,8 +87,14 @@ function generateIdempotencyKey() {
 /** Header shared across all exchange page views. */
 function ExchangeHeader({ onBack }) {
   const router = useRouter();
-  const handleLogout = () => {
-    try { localStorage.removeItem('kimana_session'); } catch (_) {}
+  const queryClient = useQueryClient();
+  const handleLogout = async () => {
+    try {
+      await api.auth.logout();
+    } catch {
+      // Sign the user out locally regardless — a failed logout call shouldn't trap them in the app.
+    }
+    queryClient.removeQueries({ queryKey: sessionQueryKey });
     router.push('/login');
   };
 
