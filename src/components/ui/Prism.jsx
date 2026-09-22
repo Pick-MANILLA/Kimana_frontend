@@ -423,6 +423,10 @@ export const Prism = ({
         if (io) io.disconnect();
         delete container.__prismIO;
       }
+      const loseContext = gl.getExtension('WEBGL_lose_context');
+      if (loseContext) {
+        loseContext.loseContext();
+      }
       if (gl.canvas.parentElement === container) container.removeChild(gl.canvas);
     };
   }, [
