@@ -1,32 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../api';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { ClockIcon } from '../../components/ui/icons';
+
+const REFRESH_MS = 120_000;
 
 export function FxRatesPanel({ onGetFirmQuote }) {
   const [sendAmount, setSendAmount] = useState('10,000');
   const [currency, setCurrency] = useState('USD');
-  const [countdownSeconds, setCountdownSeconds] = useState(102);
 
-  const rate = 1645;
-  const fee = 25;
+  const rateQuery = useQuery({
+    queryKey: ['fx', 'indicative', currency, 'NGN'],
+    queryFn: () => api.quote.getIndicativeRate(currency, 'NGN'),
+    refetchInterval: REFRESH_MS,
+  });
+
+  const rate = rateQuery.data?.rate;
   const numericAmount = parseFloat(sendAmount.replace(/,/g, '')) || 0;
-  const recipientNgn = numericAmount * rate;
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdownSeconds((prev) => (prev > 0 ? prev - 1 : 120));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTimer = (totalSecs) => {
-    const m = Math.floor(totalSecs / 60);
-    const s = totalSecs % 60;
-    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  };
+  const recipientNgn = rate != null ? numericAmount * rate : null;
 
   return (
     <div
@@ -41,7 +35,7 @@ export function FxRatesPanel({ onGetFirmQuote }) {
           <h3 className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Live FX Transfer Engine</h3>
           <p className="mt-0.5 text-xs text-neutral-400">Guaranteed rate lock with zero margin markup</p>
         </div>
-        <Badge tone="info">Demo Quote</Badge>
+        <Badge tone="info">Indicative</Badge>
       </div>
 
       <div className="mt-4 flex flex-col gap-3">
@@ -72,36 +66,32 @@ export function FxRatesPanel({ onGetFirmQuote }) {
           </select>
         </div>
 
-        {/* Rate & Fee Details */}
+        {/* Rate detail */}
         <div className="space-y-1 px-1 text-xs text-neutral-400">
           <div className="flex justify-between">
-            <span>Guaranteed Rate:</span>
-            <span className="font-mono font-bold" style={{ color: 'var(--color-brand-400)' }}>1 {currency} = ₦{rate.toLocaleString()}.00</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Fixed Fee:</span>
-            <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>${fee}.00</span>
+            <span>Indicative Rate:</span>
+            <span className="font-mono font-bold" style={{ color: 'var(--color-brand-400)' }}>
+              {rateQuery.isLoading
+                ? 'Loading…'
+                : rateQuery.isError
+                  ? 'Unavailable'
+                  : `1 ${currency} = ₦${rate.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            </span>
           </div>
         </div>
 
         {/* Recipient Receives */}
         <div className="flex items-center justify-between rounded-xl border p-3" style={{ backgroundColor: 'var(--color-surface-2)', borderColor: 'var(--color-border-subtle)' }}>
           <div>
-            <span className="block text-[11px] font-semibold text-neutral-400 uppercase">Recipient Receives</span>
+            <span className="block text-[11px] font-semibold text-neutral-400 uppercase">Recipient Receives (indicative)</span>
             <span className="text-sm font-extrabold text-emerald-400">
-              ₦{recipientNgn.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              {recipientNgn != null ? `₦${recipientNgn.toLocaleString('en-NG', { minimumFractionDigits: 2 })}` : '—'}
             </span>
           </div>
           <Badge tone="success">NGN</Badge>
         </div>
 
-        {/* Countdown */}
-        <div className="flex items-center justify-between text-xs px-1 text-neutral-400">
-          <span className="flex items-center gap-1">
-            <ClockIcon size={14} color="var(--color-warning)" /> Quote expires in:
-          </span>
-          <span className="font-mono font-bold text-amber-400">{formatTimer(countdownSeconds)}</span>
-        </div>
+        <p className="px-1 text-xs text-neutral-400">Rate refreshes automatically every 2 minutes. Fees and a locked rate appear on your firm quote.</p>
       </div>
 
       <div className="mt-4">

@@ -1,5 +1,10 @@
 import { VerificationPage } from '../../../src/features/onboarding/VerificationPage';
+import { RequireSession } from '../../../src/features/auth/RequireSession';
 
 export default function Page() {
-  return <VerificationPage />;
+  return (
+    <RequireSession>
+      <VerificationPage />
+    </RequireSession>
+  );
 }

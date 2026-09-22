@@ -1,5 +1,10 @@
 import { ApprovedPage } from '../../../src/features/onboarding/ApprovedPage';
+import { RequireSession } from '../../../src/features/auth/RequireSession';
 
 export default function Page() {
-  return <ApprovedPage />;
+  return (
+    <RequireSession>
+      <ApprovedPage />
+    </RequireSession>
+  );
 }

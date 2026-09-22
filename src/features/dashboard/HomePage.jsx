@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { api, DEMO_CUSTOMER_ID } from '../../api';
+import { sessionQueryKey } from '../auth/useSession';
 import { Button } from '../../components/ui/Button';
 import { LogoWithWordmark } from '../../components/ui/Logo';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
@@ -20,52 +23,63 @@ import { WorkingCapitalCard } from './WorkingCapitalCard';
 import { SettingsView } from './SettingsView';
 import { useDefaultCurrency } from '../../hooks/useDefaultCurrency';
 
+const CURRENCY_FULL_NAME = { NGN: 'Nigerian Naira', USD: 'US Dollar', EUR: 'Euro', GBP: 'British Pound', GHS: 'Ghanaian Cedi' };
+
 export function HomePage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('overview');
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalAmount, setModalAmount] = useState('10,000');
   const [modalCurrency, setModalCurrency] = useState('USD');
-  const [userTransfers, setUserTransfers] = useState([]);
+  // Not fed into the real transfers list below — NewTransferModal doesn't
+  // yet create a real backend transfer, so there's nothing genuine to merge in.
+  const [, setUserTransfers] = useState([]);
   const { preferredCurrency } = useDefaultCurrency();
 
-  // All balance cards defined in one place so we can reorder by preference.
-  const ALL_BALANCE_CARDS = [
-    {
-      currency: 'NGN',
-      currencyName: 'Nigerian Naira',
-      balance: { amountMinor: 1245000000, currency: 'NGN' },
-      secondaryLine: 'NIP Liquidity Ready',
-      deltaText: 'Available Operating Balance',
-      deltaTone: 'success',
-    },
-    {
-      currency: 'USD',
-      currencyName: 'US Dollar',
-      balance: { amountMinor: 2500000, currency: 'USD' },
-      secondaryLine: 'Correspondent Rail Active',
-      deltaText: 'Cross-Border Pool',
-      deltaTone: 'success',
-    },
-    {
-      currency: 'EUR',
-      currencyName: 'Euro',
-      balance: { amountMinor: 1800000, currency: 'EUR' },
-      secondaryLine: 'SEPA Settlement Ready',
-      deltaText: 'Eurozone Corridor',
-      deltaTone: 'success',
-    },
-  ];
+  const overviewQuery = useQuery({
+    queryKey: ['dashboard', 'overview'],
+    queryFn: () => api.dashboard.getOverview(DEMO_CUSTOMER_ID),
+  });
+  const overview = overviewQuery.data;
+
+  const transfersQuery = useQuery({
+    queryKey: ['transfers', 'list', DEMO_CUSTOMER_ID],
+    queryFn: () => api.transfers.listTransfers(DEMO_CUSTOMER_ID),
+  });
+  const recipientsQuery = useQuery({
+    queryKey: ['recipients', 'list', DEMO_CUSTOMER_ID],
+    queryFn: () => api.recipients.listRecipients(DEMO_CUSTOMER_ID),
+  });
+  const recentTransfers = (transfersQuery.data ?? []).slice(0, 5);
+  const recipientsById = new Map((recipientsQuery.data ?? []).map((r) => [r.id, r]));
+
+  const balanceCards = (overview?.balances ?? []).map((balance) => {
+    const highlight = overview.balanceHighlights?.find((h) => h.currency === balance.currency);
+    return {
+      currency: balance.currency,
+      currencyName: CURRENCY_FULL_NAME[balance.currency] ?? balance.currency,
+      balance: balance.balance,
+      secondaryLine: highlight?.secondaryLine,
+      deltaText: highlight?.deltaText ?? '',
+      deltaTone: highlight?.deltaTone ?? 'success',
+    };
+  });
 
   // Float the preferred currency to position 0, keep the rest in original order.
   const orderedBalanceCards = [
-    ...ALL_BALANCE_CARDS.filter((c) => c.currency === preferredCurrency),
-    ...ALL_BALANCE_CARDS.filter((c) => c.currency !== preferredCurrency),
+    ...balanceCards.filter((c) => c.currency === preferredCurrency),
+    ...balanceCards.filter((c) => c.currency !== preferredCurrency),
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem('kimana_session');
+  const handleLogout = async () => {
+    try {
+      await api.auth.logout();
+    } catch {
+      // Sign the user out locally regardless — a failed logout call shouldn't trap them in the app.
+    }
+    queryClient.removeQueries({ queryKey: sessionQueryKey });
     router.push('/login');
   };
 
@@ -188,10 +202,11 @@ export function HomePage() {
         <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-6" style={{ borderColor: 'var(--color-border-subtle)' }}>
           <div>
             <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl" style={{ color: 'var(--color-text-primary)' }}>
-              {timeOfDayGreeting()}, Adunola Exports Ltd
+              {timeOfDayGreeting()}{overview ? `, ${overview.displayName}` : ''}
             </h1>
             <p className="mt-1 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-              Adunola Exports Ltd · Account KMN-84920 · {formatLongDate(new Date().toISOString())}
+              {overview ? `${overview.businessName} · Account ${overview.accountId} · ` : ''}
+              {formatLongDate(new Date().toISOString())}
             </p>
           </div>
 
@@ -226,22 +241,33 @@ export function HomePage() {
               <div>
                 <div className="flex items-center justify-between mb-3 text-xs font-bold uppercase tracking-wider text-neutral-400">
                   <span>Available Liquidity Balances</span>
-                  <span className="text-[11px] text-neutral-400 font-normal">Demo Business Balances</span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  {orderedBalanceCards.map((card) => (
-                    <BalanceCard
-                      key={card.currency}
-                      currencyName={card.currencyName}
-                      currency={card.currency}
-                      balance={card.balance}
-                      secondaryLine={card.secondaryLine}
-                      deltaText={card.deltaText}
-                      deltaTone={card.deltaTone}
-                    />
-                  ))}
-                </div>
+                {overviewQuery.isLoading ? (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    {[0, 1, 2].map((i) => (
+                      <div key={i} className="h-32 animate-pulse rounded-md" style={{ background: 'var(--color-surface-1)' }} />
+                    ))}
+                  </div>
+                ) : overviewQuery.isError ? (
+                  <p className="text-sm" style={{ color: 'var(--color-danger)' }}>
+                    {overviewQuery.error?.message || 'We couldn’t load your balances. Check your connection and try again.'}
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    {orderedBalanceCards.map((card) => (
+                      <BalanceCard
+                        key={card.currency}
+                        currencyName={card.currencyName}
+                        currency={card.currency}
+                        balance={card.balance}
+                        secondaryLine={card.secondaryLine}
+                        deltaText={card.deltaText}
+                        deltaTone={card.deltaTone}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Main Overview Grid */}
@@ -264,7 +290,23 @@ export function HomePage() {
                     </div>
 
                     <div className="mt-4">
-                      <TransfersTable customTransfers={userTransfers} />
+                      {transfersQuery.isLoading ? (
+                        <div className="space-y-3">
+                          {[0, 1, 2].map((i) => (
+                            <div key={i} className="h-14 animate-pulse rounded-md" style={{ background: 'var(--color-surface-2)' }} />
+                          ))}
+                        </div>
+                      ) : transfersQuery.isError ? (
+                        <p className="text-sm" style={{ color: 'var(--color-danger)' }}>
+                          {transfersQuery.error?.message || 'We couldn’t load your transfers. Check your connection and try again.'}
+                        </p>
+                      ) : recentTransfers.length === 0 ? (
+                        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                          No transfers yet — start your first cross-border payment to see it here.
+                        </p>
+                      ) : (
+                        <TransfersTable transfers={recentTransfers} recipientsById={recipientsById} />
+                      )}
                     </div>
                   </div>
                 </div>

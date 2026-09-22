@@ -1,5 +1,10 @@
 import { DocumentsPage } from '../../../src/features/onboarding/DocumentsPage';
+import { RequireSession } from '../../../src/features/auth/RequireSession';
 
 export default function Page() {
-  return <DocumentsPage />;
+  return (
+    <RequireSession>
+      <DocumentsPage />
+    </RequireSession>
+  );
 }

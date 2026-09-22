@@ -5,11 +5,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
-import { api } from '../../api';
+import { api, DEMO_CUSTOMER_ID } from '../../api';
 import { Button } from '../../components/ui/Button';
 import { SelectField } from '../../components/ui/SelectField';
 import { TextField } from '../../components/ui/TextField';
 import { businessDetailsCopy, businessTypeOptions, industryOptions, nigerianStates } from '../../copy';
+import { sessionQueryKey } from '../auth/useSession';
 import { OnboardingLayout } from './OnboardingLayout';
 import { onboardingQueryKey, useOnboardingApplication } from './useOnboardingApplication';
 
@@ -60,9 +61,24 @@ export function BusinessDetailsPage() {
   });
 
   const mutation = useMutation({
-    mutationFn: (values) => {
-      if (!application) throw new Error('Application not loaded yet');
-      return api.onboarding.saveBusinessDetails(application.id, {
+    mutationFn: async (values) => {
+      // A fresh visitor has no session yet — register() creates the account
+      // (and, on the live backend, a blank draft application alongside it)
+      // before we can save anything onto it. A visitor returning to an
+      // already-registered draft just saves directly.
+      let app = application;
+      if (!app) {
+        const session = await api.auth.register({
+          email: values.email,
+          password: values.password,
+          displayName: values.legalName,
+          legalName: values.legalName,
+        });
+        queryClient.setQueryData(sessionQueryKey, session);
+        app = await api.onboarding.getApplication(DEMO_CUSTOMER_ID);
+      }
+
+      return api.onboarding.saveBusinessDetails(app.id, {
         email: values.email,
         password: values.password,
         legalName: values.legalName,
@@ -156,7 +172,7 @@ export function BusinessDetailsPage() {
 
         {mutation.isError ? (
           <p className="text-sm" style={{ color: 'var(--color-danger)' }}>
-            We couldn’t save your details. Check your connection and try again.
+            {mutation.error?.message || 'We couldn’t save your details. Check your connection and try again.'}
           </p>
         ) : null}
 

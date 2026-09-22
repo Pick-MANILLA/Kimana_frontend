@@ -1,16 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { api } from '../../api';
 import { BackButton } from '../../components/ui/BackButton';
 import { Button } from '../../components/ui/Button';
 import { LogoWithWordmark } from '../../components/ui/Logo';
 import { TextField } from '../../components/ui/TextField';
-import { ArrowRightIcon, CheckCircleIcon, ShieldIcon } from '../../components/ui/icons';
+import { ArrowRightIcon, ShieldIcon } from '../../components/ui/icons';
+import { sessionQueryKey } from './useSession';
 
 const loginSchema = z.object({
   email: z.string().trim().email('Enter a valid business email address.'),
@@ -19,7 +21,7 @@ const loginSchema = z.object({
 
 export function LoginPage() {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -27,19 +29,16 @@ export function LoginPage() {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: 'director@adunola-exports.ng',
-      password: 'password123',
-    },
+    defaultValues: { email: '', password: '' },
   });
 
-  const onSubmit = async (_values) => {
-    setIsSubmitting(true);
-    // Simulate brief network authentication check
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setIsSubmitting(false);
-    router.push('/dashboard');
-  };
+  const mutation = useMutation({
+    mutationFn: (values) => api.auth.login(values),
+    onSuccess: (session) => {
+      queryClient.setQueryData(sessionQueryKey, session);
+      router.push('/dashboard');
+    },
+  });
 
   return (
     <div
@@ -82,7 +81,7 @@ export function LoginPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          <form onSubmit={handleSubmit((values) => mutation.mutate(values))} className="space-y-5" noValidate>
             <TextField
               label="Business Email Address"
               type="email"
@@ -116,30 +115,18 @@ export function LoginPage() {
               </span>
             </div>
 
-            {/* Quick Demo Credentials Banner */}
-            <div
-              className="rounded-xl border p-3.5 flex items-start gap-2.5 text-xs"
-              style={{
-                backgroundColor: 'rgba(34, 197, 94, 0.08)',
-                borderColor: 'rgba(34, 197, 94, 0.2)',
-                color: 'var(--color-success)',
-              }}
-            >
-              <CheckCircleIcon size={16} color="var(--color-success)" />
-              <div>
-                <span className="font-bold block">Demo Credentials Active</span>
-                <span className="text-[11px]" style={{ color: 'var(--color-text-secondary)' }}>
-                  Pre-filled with Tier 3 verified corporate account details. Click Sign in to enter dashboard.
-                </span>
-              </div>
-            </div>
+            {mutation.isError ? (
+              <p className="text-sm" style={{ color: 'var(--color-danger)' }}>
+                {mutation.error?.message || 'We couldn’t sign you in. Check your details and try again.'}
+              </p>
+            ) : null}
 
             <Button
               type="submit"
               className="w-full py-3 text-base font-bold mt-2"
-              disabled={isSubmitting}
+              disabled={mutation.isPending}
             >
-              {isSubmitting ? 'Signing in…' : 'Sign in'} <ArrowRightIcon size={16} />
+              {mutation.isPending ? 'Signing in…' : 'Sign in'} <ArrowRightIcon size={16} />
             </Button>
           </form>
 
