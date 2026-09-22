@@ -31,6 +31,7 @@ export function useTheme() {
   const [theme, setTheme] = useState(DEFAULT_THEME);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- localStorage/matchMedia aren't available during SSR; state must start at DEFAULT_THEME and sync here post-mount to avoid a hydration mismatch.
     setTheme(readStoredTheme());
   }, []);
 

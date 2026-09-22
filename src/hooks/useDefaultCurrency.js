@@ -24,6 +24,7 @@ export function useDefaultCurrency() {
   const [preferredCurrency, setPreferredCurrency] = useState(DEFAULT_CURRENCY);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- localStorage isn't available during SSR; state must start at DEFAULT_CURRENCY and sync here post-mount to avoid a hydration mismatch.
     setPreferredCurrency(readStoredCurrency());
   }, []);
 

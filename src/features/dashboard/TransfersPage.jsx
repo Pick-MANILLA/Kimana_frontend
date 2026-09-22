@@ -26,7 +26,6 @@ import {
   CheckCircleIcon,
   ClockIcon,
   DownloadIcon,
-  EmptyCircleIcon,
   ExclamationTriangleIcon,
   PlusIcon,
   SpinnerIcon,
@@ -632,7 +631,7 @@ export function TransfersPage({ onNewTransfer }) {
     try {
       await api.ledger.requestStatementExport(DEMO_CUSTOMER_ID);
       setShowExportToast(true);
-    } catch (_) {
+    } catch {
       // Even on mock error, show the toast — it's a placeholder.
       setShowExportToast(true);
     } finally {
