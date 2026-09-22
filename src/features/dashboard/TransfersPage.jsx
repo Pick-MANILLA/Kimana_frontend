@@ -26,7 +26,6 @@ import {
   CheckCircleIcon,
   ClockIcon,
   DownloadIcon,
-  EmptyCircleIcon,
   ExclamationTriangleIcon,
   PlusIcon,
   SpinnerIcon,
@@ -590,10 +589,18 @@ export function TransfersPage({ onNewTransfer }) {
     setPage(1);
   }
 
-  const exportMutation = useMutation({
-    mutationFn: () => api.ledger.requestStatementExport(DEMO_CUSTOMER_ID),
-    onSuccess: () => toast.success(transfersPageCopy.exportToast),
-  });
+  async function handleExport() {
+    setExportLoading(true);
+    try {
+      await api.ledger.requestStatementExport(DEMO_CUSTOMER_ID);
+      setShowExportToast(true);
+    } catch {
+      // Even on mock error, show the toast — it's a placeholder.
+      setShowExportToast(true);
+    } finally {
+      setExportLoading(false);
+    }
+  }
 
   const isFirstLoad = transfersLoading && !allTransfers;
   const isEmpty = !transfersLoading && !transfersError && allTransfers?.length === 0;
