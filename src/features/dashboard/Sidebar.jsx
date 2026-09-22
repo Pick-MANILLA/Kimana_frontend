@@ -23,15 +23,6 @@ const NAV_LINKS = [
 function SidebarContent({ activeTab, onTabChange, onLogout, onNavigate }) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    if (onLogout) {
-      onLogout();
-    } else {
-      localStorage.removeItem('kimana_session');
-      router.push('/login');
-    }
-  };
-
   const handleTabChange = (id) => {
     onTabChange(id);
     onNavigate?.();
@@ -120,7 +111,7 @@ function SidebarContent({ activeTab, onTabChange, onLogout, onNavigate }) {
 
         <button
           type="button"
-          onClick={handleLogout}
+          onClick={onLogout}
           className="w-full flex items-center gap-3.5 px-3.5 py-2 mt-2 rounded-xl text-xs font-semibold transition-all hover:bg-rose-500/10 hover:text-rose-400 group"
           style={{ color: 'var(--color-text-secondary)' }}
           title="Sign out of your session"
