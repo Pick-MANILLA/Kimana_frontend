@@ -15,6 +15,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { api } from '../../api';
+import { decodeContractError } from '../../lib/decodeContractError';
 import { sessionQueryKey } from '../auth/useSession';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
@@ -305,6 +306,11 @@ function truncateRef(ref) {
   return `${ref.slice(0, 8)}…${ref.slice(-6)}`;
 }
 
+// Contract reverts win when present; otherwise keep the API's own message.
+function describeError(e) {
+  return decodeContractError(e) ?? (e.code === 'NETWORK' ? exchangeCopy.errors.network : (e.message || exchangeCopy.errors.generic));
+}
+
 /** Error banner reused across all flows. */
 function ErrorBanner({ message, onRetry }) {
   if (!message) return null;
@@ -458,7 +464,7 @@ function ConvertInFlow({ settlementBalance, localBalances, onConversionComplete 
       setQuoteExpired(false);
       setStep('quote');
     } catch (e) {
-      setError(e.code === 'NETWORK' ? exchangeCopy.errors.network : (e.message || exchangeCopy.errors.generic));
+      setError(describeError(e));
     } finally {
       setQuoteLoading(false);
     }
@@ -484,7 +490,7 @@ function ConvertInFlow({ settlementBalance, localBalances, onConversionComplete 
       } else {
         // Rotate idempotency key on a non-idempotent retry scenario.
         setIdempotencyKey(generateIdempotencyKey());
-        setError(e.code === 'NETWORK' ? exchangeCopy.errors.network : (e.message || exchangeCopy.errors.generic));
+        setError(describeError(e));
       }
     } finally {
       setConfirmLoading(false);
@@ -707,7 +713,7 @@ function ConvertOutFlow({ settlementBalance, onConversionComplete }) {
       setQuoteExpired(false);
       setStep('quote');
     } catch (e) {
-      setError(e.code === 'NETWORK' ? exchangeCopy.errors.network : (e.message || exchangeCopy.errors.generic));
+      setError(describeError(e));
     } finally {
       setQuoteLoading(false);
     }
@@ -728,7 +734,7 @@ function ConvertOutFlow({ settlementBalance, onConversionComplete }) {
         setError(exchangeCopy.errors.quoteExpired);
       } else {
         setIdempotencyKey(generateIdempotencyKey());
-        setError(e.code === 'NETWORK' ? exchangeCopy.errors.network : (e.message || exchangeCopy.errors.generic));
+        setError(describeError(e));
       }
     } finally {
       setConfirmLoading(false);
@@ -963,7 +969,7 @@ function ExternalPayoutFlow({ settlementBalance, onPayoutSubmitted }) {
       setQuoteExpired(false);
       setStep('quote');
     } catch (e) {
-      setError(e.code === 'NETWORK' ? exchangeCopy.errors.network : (e.message || exchangeCopy.errors.generic));
+      setError(describeError(e));
     } finally {
       setQuoteLoading(false);
     }
@@ -986,7 +992,7 @@ function ExternalPayoutFlow({ settlementBalance, onPayoutSubmitted }) {
         setError(exchangeCopy.errors.quoteExpired);
       } else {
         setIdempotencyKey(generateIdempotencyKey());
-        setError(e.code === 'NETWORK' ? exchangeCopy.errors.network : (e.message || exchangeCopy.errors.generic));
+        setError(describeError(e));
       }
     } finally {
       setConfirmLoading(false);
