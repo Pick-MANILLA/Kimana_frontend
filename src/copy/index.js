@@ -95,6 +95,12 @@ export const documentsCopy = {
   retry: 'Retry',
   uploading: 'Uploading…',
   failed: 'Upload failed',
+  failedBadge: 'Failed',
+  tooLarge: 'File exceeds maximum allowed size of 10 MB.',
+  unsupportedType: 'Unsupported file type. Upload a PDF, JPG, or PNG.',
+  network: 'The connection dropped during the upload. Check your signal and retry.',
+  uploadFailedFallback: 'Upload failed. Please try again.',
+  chooseAnother: 'Choose another file',
   back: 'Back',
   continue: 'Continue',
   checklist: [

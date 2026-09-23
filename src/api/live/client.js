@@ -28,13 +28,31 @@ class HttpApiError extends Error {
   }
 }
 
+// Rejections raised by axum's own layers (e.g. DefaultBodyLimit) arrive as
+// plain text, not the `{ code, message, retryable }` JSON the handlers send.
+const PLAIN_STATUS_ERRORS = {
+  413: { code: 'VALIDATION', message: 'File exceeds maximum allowed size of 10 MB.', retryable: false },
+  415: { code: 'VALIDATION', message: 'Unsupported file type. Upload a PDF, JPG, or PNG.', retryable: false },
+};
+
+function tryParseJson(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return undefined;
+  }
+}
+
 async function parseOrThrow(res) {
   if (res.status === 204) return undefined;
   const text = await res.text();
-  const json = text ? JSON.parse(text) : undefined;
   if (!res.ok) {
+    const json = text ? tryParseJson(text) : undefined;
     if (json && typeof json === 'object' && 'code' in json) {
       throw new HttpApiError(json);
+    }
+    if (PLAIN_STATUS_ERRORS[res.status]) {
+      throw new HttpApiError(PLAIN_STATUS_ERRORS[res.status]);
     }
     throw new HttpApiError({
       code: 'SERVER_ERROR',
@@ -42,7 +60,7 @@ async function parseOrThrow(res) {
       retryable: res.status >= 500,
     });
   }
-  return json;
+  return text ? JSON.parse(text) : undefined;
 }
 
 async function http(method, path, body, extraHeaders) {
