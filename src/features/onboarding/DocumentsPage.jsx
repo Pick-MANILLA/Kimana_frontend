@@ -10,13 +10,35 @@ import { documentsCopy } from '../../copy';
 import { OnboardingLayout } from './OnboardingLayout';
 import { onboardingQueryKey, useOnboardingApplication } from './useOnboardingApplication';
 
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_MIME_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
+const ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png'];
+
+// Some OSes report an empty MIME type, so the extension is the fallback signal.
+function validateFile(file) {
+  if (file.size > MAX_FILE_SIZE_BYTES) return documentsCopy.tooLarge;
+  const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+  const mimeOk = !file.type || ALLOWED_MIME_TYPES.includes(file.type);
+  if (!ALLOWED_EXTENSIONS.includes(extension) || !mimeOk) return documentsCopy.unsupportedType;
+  return null;
+}
+
+function toRowError(err) {
+  return {
+    message: err?.code === 'NETWORK' ? documentsCopy.network : err?.message || documentsCopy.uploadFailedFallback,
+    retryable: err?.retryable !== false,
+  };
+}
+
 export function DocumentsPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: application } = useOnboardingApplication();
   const [confirmed, setConfirmed] = useState(false);
   const [progressByType, setProgressByType] = useState({});
+  const [errorByType, setErrorByType] = useState({});
   const fileInputRefs = useRef({});
+  const lastFileByType = useRef({});
 
   const uploadMutation = useMutation({
     mutationFn: async ({ type, file }) => {
@@ -29,15 +51,27 @@ export function DocumentsPage() {
       );
     },
     onSuccess: (doc) => applyDocument(doc),
+    onError: (err, { type }) => failRow(type, toRowError(err)),
   });
 
   const retryMutation = useMutation({
-    mutationFn: (documentId) => {
+    mutationFn: ({ documentId, type }) => {
       if (!application) throw new Error('Application not loaded yet');
+      setProgressByType((prev) => ({ ...prev, [type]: 0 }));
       return api.onboarding.retryDocumentUpload(application.id, documentId);
     },
     onSuccess: (doc) => applyDocument(doc),
+    onError: (err, { type }) => failRow(type, toRowError(err)),
   });
+
+  function setRowError(type, error) {
+    setErrorByType((prev) => ({ ...prev, [type]: error }));
+  }
+
+  function failRow(type, error) {
+    setProgressByType((prev) => ({ ...prev, [type]: undefined }));
+    setRowError(type, error);
+  }
 
   function applyDocument(doc) {
     queryClient.setQueryData(onboardingQueryKey, (prev) =>
@@ -53,7 +87,27 @@ export function DocumentsPage() {
   function onFileChosen(type, e) {
     const file = e.target.files?.[0];
     e.target.value = '';
-    if (file) uploadMutation.mutate({ type, file });
+    if (!file) return;
+
+    const validationError = validateFile(file);
+    if (validationError) {
+      setRowError(type, { message: validationError, retryable: false });
+      return;
+    }
+    lastFileByType.current[type] = file;
+    setRowError(type, undefined);
+    uploadMutation.mutate({ type, file });
+  }
+
+  function handleRetry(type, doc) {
+    setRowError(type, undefined);
+    const file = lastFileByType.current[type];
+    // A thrown upload never created a server record, so re-send the file itself.
+    if (errorByType[type] && file) {
+      uploadMutation.mutate({ type, file });
+    } else if (doc) {
+      retryMutation.mutate({ documentId: doc.id, type });
+    }
   }
 
   const documents = application?.documents ?? [];
@@ -68,7 +122,11 @@ export function DocumentsPage() {
         {documentsCopy.checklist.map((item) => {
           const doc = documents.find((d) => d.type === item.type);
           const progress = progressByType[item.type];
-          const isUploading = doc?.status === 'uploading' || progress !== undefined;
+          const rowError = errorByType[item.type];
+          const isFailed = Boolean(rowError) || doc?.status === 'failed';
+          const isUploading = !isFailed && (doc?.status === 'uploading' || progress !== undefined);
+          const canRetry = rowError ? rowError.retryable : doc?.status === 'failed';
+          const failureMessage = rowError?.message ?? doc?.errorMessage ?? documentsCopy.failed;
 
           return (
             <li
@@ -83,9 +141,9 @@ export function DocumentsPage() {
                 <p className="mt-0.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
                   {isUploading ? `${documentsCopy.uploading} ${progress ?? doc?.uploadProgressPercent ?? 0}%` : item.hint}
                 </p>
-                {doc?.status === 'failed' ? (
-                  <p className="mt-0.5 text-xs" style={{ color: 'var(--color-danger)' }}>
-                    {documentsCopy.failed}
+                {isFailed ? (
+                  <p className="mt-0.5 text-xs" style={{ color: 'var(--color-danger)' }} role="alert">
+                    {failureMessage}
                   </p>
                 ) : null}
               </div>
@@ -100,7 +158,25 @@ export function DocumentsPage() {
                   className="sr-only"
                   onChange={(e) => onFileChosen(item.type, e)}
                 />
-                {doc?.status === 'uploaded' ? (
+                {isFailed ? (
+                  <>
+                    <span
+                      className="rounded-full px-3 py-1 text-xs font-semibold"
+                      style={{ background: 'var(--color-danger)', color: 'var(--color-on-danger)' }}
+                    >
+                      {documentsCopy.failedBadge}
+                    </span>
+                    {canRetry ? (
+                      <Button type="button" variant="outline" onClick={() => handleRetry(item.type, doc)}>
+                        {documentsCopy.retry}
+                      </Button>
+                    ) : (
+                      <Button type="button" variant="outline" onClick={() => triggerPicker(item.type)}>
+                        {documentsCopy.chooseAnother}
+                      </Button>
+                    )}
+                  </>
+                ) : doc?.status === 'uploaded' ? (
                   <>
                     <span
                       className="rounded-full px-3 py-1 text-xs font-semibold"
@@ -117,10 +193,6 @@ export function DocumentsPage() {
                       {documentsCopy.replace}
                     </button>
                   </>
-                ) : doc?.status === 'failed' ? (
-                  <Button type="button" variant="outline" onClick={() => retryMutation.mutate(doc.id)}>
-                    {documentsCopy.retry}
-                  </Button>
                 ) : (
                   <Button type="button" variant="outline" disabled={isUploading} onClick={() => triggerPicker(item.type)}>
                     {isUploading ? '…' : documentsCopy.upload}
