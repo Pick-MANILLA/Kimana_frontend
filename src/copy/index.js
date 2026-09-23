@@ -77,6 +77,14 @@ export const directorsUboCopy = {
   continue: 'Continue',
 };
 
+export const onboardingErrorsCopy = {
+  network: 'A connection issue interrupted this save. Check your signal and try again. Nothing you entered was lost.',
+  sessionExpired: 'Your session expired. Sign in again to keep going.',
+  generic: 'We couldn’t save this. Try again in a moment.',
+  supportPrompt: 'Need help? Contact our onboarding team at',
+  supportEmail: 'support@kimana.io',
+};
+
 export const documentsCopy = {
   title: 'Upload documents',
   subtitle: 'Certified copies required. PDF, JPG, or PNG — max 10 MB each.',

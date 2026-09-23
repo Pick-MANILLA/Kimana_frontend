@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
@@ -12,10 +13,27 @@ import { TextField } from '../../components/ui/TextField';
 import { businessDetailsCopy, businessTypeOptions, industryOptions, nigerianStates } from '../../copy';
 import { sessionQueryKey } from '../auth/useSession';
 import { OnboardingLayout } from './OnboardingLayout';
+import { SaveErrorBanner } from './SaveErrorBanner';
+import { applyFieldErrors } from './saveErrors';
 import { onboardingQueryKey, useOnboardingApplication } from './useOnboardingApplication';
 
 const businessTypeValues = businessTypeOptions.map((o) => o.value);
 const industryValues = industryOptions.map((o) => o.value);
+
+// Backend field keys are snake_case; only fields rendered on this form are mapped.
+const SERVER_FIELD_MAP = {
+  email: 'email',
+  password: 'password',
+  legal_name: 'legalName',
+  legalName: 'legalName',
+  cac_number: 'cacNumber',
+  cacNumber: 'cacNumber',
+  business_type: 'businessType',
+  businessType: 'businessType',
+  industry: 'industry',
+  state: 'state',
+  'trading_address.state': 'state',
+};
 
 const schema = z
   .object({
@@ -44,6 +62,7 @@ export function BusinessDetailsPage() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(schema),
@@ -59,6 +78,8 @@ export function BusinessDetailsPage() {
       state: application?.business?.tradingAddress.state ?? '',
     },
   });
+
+  const [errorShownOnFields, setErrorShownOnFields] = useState(false);
 
   const mutation = useMutation({
     mutationFn: async (values) => {
@@ -89,9 +110,19 @@ export function BusinessDetailsPage() {
         countryOfIncorporation: 'NG',
       });
     },
+    onMutate: () => setErrorShownOnFields(false),
     onSuccess: (updated) => {
       queryClient.setQueryData(onboardingQueryKey, updated);
       router.push('/onboarding/directors-ubo');
+    },
+    onError: (error) => {
+      let applied = applyFieldErrors(error, setError, SERVER_FIELD_MAP);
+      // Only /register can conflict in this flow, and its only conflict is a taken email.
+      if (!applied && error?.code === 'CONFLICT') {
+        setError('email', { type: 'server', message: error.message }, { shouldFocus: true });
+        applied = true;
+      }
+      setErrorShownOnFields(applied);
     },
   });
 
@@ -170,11 +201,7 @@ export function BusinessDetailsPage() {
           />
         </div>
 
-        {mutation.isError ? (
-          <p className="text-sm" style={{ color: 'var(--color-danger)' }}>
-            {mutation.error?.message || 'We couldn’t save your details. Check your connection and try again.'}
-          </p>
-        ) : null}
+        {mutation.isError && !errorShownOnFields ? <SaveErrorBanner error={mutation.error} /> : null}
 
         <div className="flex justify-end pt-2">
           <Button type="submit" disabled={!isValid || mutation.isPending}>
