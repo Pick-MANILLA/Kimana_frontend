@@ -24,6 +24,7 @@ class HttpApiError extends Error {
     this.name = 'ApiError';
     this.code = body.code;
     this.retryable = body.retryable;
+    this.fieldErrors = body.field_errors ?? body.fieldErrors ?? {};
   }
 }
 

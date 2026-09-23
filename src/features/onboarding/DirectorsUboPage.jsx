@@ -11,6 +11,7 @@ import { Button } from '../../components/ui/Button';
 import { TextField } from '../../components/ui/TextField';
 import { directorsUboCopy } from '../../copy';
 import { OnboardingLayout } from './OnboardingLayout';
+import { SaveErrorBanner } from './SaveErrorBanner';
 import { onboardingQueryKey, useOnboardingApplication } from './useOnboardingApplication';
 
 const schema = z.object({
@@ -186,11 +187,7 @@ export function DirectorsUboPage() {
           + {directorsUboCopy.addAnother}
         </button>
 
-        {mutation.isError ? (
-          <p className="text-sm" style={{ color: 'var(--color-danger)' }}>
-            We couldn’t save this. Check your connection and try again.
-          </p>
-        ) : null}
+        {mutation.isError ? <SaveErrorBanner error={mutation.error} /> : null}
 
         <div className="flex justify-between gap-3 pt-2">
           <Button type="button" variant="outline" onClick={() => router.push('/onboarding/business-details')}>
