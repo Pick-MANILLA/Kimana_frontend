@@ -169,5 +169,109 @@ export function createLiveApiClient() {
       listTransfers: (_customerId, filter) =>
         http('GET', `/transfers${filter?.status ? `?status=${filter.status}` : ''}`),
     },
+
+    // Real: balance, buy (local -> USDC), convert (USDC -> local), and trade
+    // history. NOT real: external payout of USDC to an outside destination —
+    // the deployed vault contract has no per-customer send function (only
+    // pooled fund/settle between the operator and registered on/off-ramp
+    // partners), so requestPayoutQuote/executePayout/getPayoutStatus/
+    // advancePayoutStatus/listPayouts stay on the mock via the spread below.
+    // See Kimana_backend#77 for the full writeup of what the contract can
+    // and can't do.
+    settlement: {
+      ...mockApiClient.settlement,
+
+      getSettlementBalance: async () => {
+        const res = await http('GET', '/settlement/balance');
+        return {
+          accountId: 'settlement',
+          currency: res.asset,
+          balance: { amountMinor: res.amountMinor, currency: res.asset },
+          asOf: res.asOf,
+        };
+      },
+
+      getLocalBalances: async () => {
+        const overview = await http('GET', '/dashboard/overview');
+        return overview.balances ?? [];
+      },
+
+      // No server-side rate lock exists for this feature (unlike the main
+      // transfer flow's /quotes) — compose a short-lived client-side preview
+      // from the real indicative rate, matching the mock's ConversionQuote
+      // shape so ExchangePage doesn't need to branch on live vs mock.
+      requestConversionQuote: async (input) => {
+        const toUsdc = input.receiveCurrency === 'USDC';
+        const localCurrency = toUsdc ? input.sendCurrency : input.receiveCurrency;
+        // USDC is USD 1:1 (Kimana_backend#77) — USD itself needs no rate lookup,
+        // and the backend rejects an identical send/receive pair anyway.
+        const rate = localCurrency === 'USD' ? 1 : (await http('GET', `/rates/indicative?send=USD&receive=${localCurrency}`)).rate;
+
+        // rate = local-currency units per 1 USD (USDC treated as USD 1:1).
+        const sendAmount =
+          input.amountField === 'send'
+            ? input.amount
+            : {
+                amountMinor: Math.round(toUsdc ? input.amount.amountMinor * rate : input.amount.amountMinor / rate),
+                currency: input.sendCurrency,
+              };
+        const receiveAmount =
+          input.amountField === 'receive'
+            ? input.amount
+            : {
+                amountMinor: Math.round(toUsdc ? input.amount.amountMinor / rate : input.amount.amountMinor * rate),
+                currency: input.receiveCurrency,
+              };
+
+        const issuedAt = new Date();
+        return {
+          id: `cq_${Math.random().toString(36).slice(2, 10)}`,
+          direction: toUsdc ? 'to_settlement' : 'from_settlement',
+          sendCurrency: input.sendCurrency,
+          receiveCurrency: input.receiveCurrency,
+          breakdown: { rate, fee: { amountMinor: 0, currency: input.sendCurrency }, sendAmount, receiveAmount },
+          issuedAt: issuedAt.toISOString(),
+          // No server-enforced expiry for this preview — 90s client-side
+          // freshness window so the UI's existing "quote expired" flow works.
+          expiresAt: new Date(issuedAt.getTime() + 90_000).toISOString(),
+        };
+      },
+
+      executeConversion: async (input) => {
+        const { quote, idempotencyKey } = input;
+        if (new Date(quote.expiresAt) < new Date()) {
+          throw new HttpApiError({
+            code: 'RATE_EXPIRED',
+            message: 'This rate preview has gone stale. Request a new one to continue.',
+            retryable: true,
+          });
+        }
+
+        const headers = { 'idempotency-key': idempotencyKey };
+        if (quote.direction === 'to_settlement') {
+          await http('POST', '/settlement/buy', { amount: quote.breakdown.sendAmount }, headers);
+        } else {
+          await http(
+            'POST',
+            '/settlement/convert',
+            { usdcAmountMinor: quote.breakdown.sendAmount.amountMinor, currency: quote.receiveCurrency },
+            headers,
+          );
+        }
+
+        return {
+          id: `conv_${Math.random().toString(36).slice(2, 10)}`,
+          reference: `EX-${Math.floor(1000 + Math.random() * 9000)}`,
+          idempotencyKey,
+          direction: quote.direction,
+          sendAmount: quote.breakdown.sendAmount,
+          receiveAmount: quote.breakdown.receiveAmount,
+          rate: quote.breakdown.rate,
+          executedAt: new Date().toISOString(),
+        };
+      },
+
+      getTransactions: () => http('GET', '/settlement/transactions'),
+    },
   };
 }
