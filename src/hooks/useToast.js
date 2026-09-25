@@ -21,8 +21,14 @@ function getSnapshot() {
   return toasts;
 }
 
+// A fresh [] on every call looks like a changed snapshot to
+// useSyncExternalStore (it compares by reference), which is exactly the
+// infinite-loop anti-pattern React's own warning describes — cache one
+// stable empty array instead, since the server-rendered snapshot never
+// legitimately changes.
+const EMPTY_TOASTS = [];
 function getServerSnapshot() {
-  return [];
+  return EMPTY_TOASTS;
 }
 
 function dismiss(id) {

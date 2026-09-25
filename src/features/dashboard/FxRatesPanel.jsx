@@ -8,13 +8,18 @@ import { Button } from '../../components/ui/Button';
 
 const REFRESH_MS = 120_000;
 
-export function FxRatesPanel({ onGetFirmQuote }) {
+// apiClient defaults to the live/mock-switching client for the real
+// dashboard. The public landing page reuses this panel for its marketing
+// showcase and passes the mock client explicitly instead — an anonymous
+// visitor has no session, and a decorative preview has no business calling
+// the real backend at all.
+export function FxRatesPanel({ onGetFirmQuote, apiClient = api }) {
   const [sendAmount, setSendAmount] = useState('10,000');
   const [currency, setCurrency] = useState('USD');
 
   const rateQuery = useQuery({
     queryKey: ['fx', 'indicative', currency, 'NGN'],
-    queryFn: () => api.quote.getIndicativeRate(currency, 'NGN'),
+    queryFn: () => apiClient.quote.getIndicativeRate(currency, 'NGN'),
     refetchInterval: REFRESH_MS,
   });
 

@@ -1,7 +1,13 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { api, DEMO_CUSTOMER_ID } from '../../../api';
+import { DEMO_CUSTOMER_ID } from '../../../api';
+// This section is a static marketing showcase on the public landing page —
+// there's no visitor session, so it must never call the live backend (that
+// was firing real, always-401 requests for every anonymous page view). Use
+// the mock client directly, bypassing the live/mock switch in ../../../api,
+// so it always shows illustrative demo data with zero network calls.
+import { mockApiClient } from '../../../api/mock';
 import { Button } from '../../../components/ui/Button';
 import { ArrowUpRightIcon, PlusIcon } from '../../../components/ui/icons';
 import { formatMoney } from '../../../money/money';
@@ -16,15 +22,15 @@ const CURRENCY_FULL_NAME = { NGN: 'Nigerian Naira', USD: 'US Dollar', EUR: 'Euro
 export function ProductCenterpieceSection() {
   const overviewQuery = useQuery({
     queryKey: ['dashboard', 'overview', 'landing'],
-    queryFn: () => api.dashboard.getOverview(DEMO_CUSTOMER_ID),
+    queryFn: () => mockApiClient.dashboard.getOverview(DEMO_CUSTOMER_ID),
   });
   const transfersQuery = useQuery({
     queryKey: ['transfers', 'list', 'landing'],
-    queryFn: () => api.transfers.listTransfers(DEMO_CUSTOMER_ID),
+    queryFn: () => mockApiClient.transfers.listTransfers(DEMO_CUSTOMER_ID),
   });
   const recipientsQuery = useQuery({
     queryKey: ['recipients', 'list', 'landing'],
-    queryFn: () => api.recipients.listRecipients(DEMO_CUSTOMER_ID),
+    queryFn: () => mockApiClient.recipients.listRecipients(DEMO_CUSTOMER_ID),
   });
 
   const overview = overviewQuery.data;
@@ -143,7 +149,7 @@ export function ProductCenterpieceSection() {
 
             {/* Right 5 Cols: FX Rates & Panels */}
             <div className="lg:col-span-5 flex flex-col gap-4">
-              <FxRatesPanel />
+              <FxRatesPanel apiClient={mockApiClient} />
               {overview?.pendingActions && overview.pendingActions.length > 0 ? (
                 <PendingActionsPanel actions={overview.pendingActions} />
               ) : null}

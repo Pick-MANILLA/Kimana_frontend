@@ -589,18 +589,12 @@ export function TransfersPage({ onNewTransfer }) {
     setPage(1);
   }
 
-  async function handleExport() {
-    setExportLoading(true);
-    try {
-      await api.ledger.requestStatementExport(DEMO_CUSTOMER_ID);
-      setShowExportToast(true);
-    } catch {
-      // Even on mock error, show the toast — it's a placeholder.
-      setShowExportToast(true);
-    } finally {
-      setExportLoading(false);
-    }
-  }
+  const exportMutation = useMutation({
+    mutationFn: () => api.ledger.requestStatementExport(DEMO_CUSTOMER_ID),
+    // MVP placeholder pipeline (see LedgerApi.requestStatementExport) — there's
+    // no real export to fail, so queuing always reads as a success to the user.
+    onSettled: () => toast.success(transfersPageCopy.exportQueuedMessage ?? 'Your statement export has been queued.'),
+  });
 
   const isFirstLoad = transfersLoading && !allTransfers;
   const isEmpty = !transfersLoading && !transfersError && allTransfers?.length === 0;
