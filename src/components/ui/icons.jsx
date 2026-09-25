@@ -93,6 +93,16 @@ export function SendIcon({ size = 18, color = 'currentColor' }) {
   );
 }
 
+export function ReceiveIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M10 2.5v9.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M6 8.5l4 4 4-4" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 13.5v2a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-2" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function DocumentIcon({ size = 18, color = 'currentColor' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 20" fill="none" aria-hidden="true">

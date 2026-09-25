@@ -8,13 +8,14 @@ import { sessionQueryKey } from '../auth/useSession';
 import { Button } from '../../components/ui/Button';
 import { LogoWithWordmark } from '../../components/ui/Logo';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
-import { ArrowUpRightIcon, CardIcon, DocumentIcon, GearIcon, GridIcon, LogOutIcon, MenuIcon, PlusIcon, SendIcon, ArrowRightIcon } from '../../components/ui/icons';
+import { ArrowUpRightIcon, CardIcon, DocumentIcon, GearIcon, GridIcon, LogOutIcon, MenuIcon, PlusIcon, ReceiveIcon, SendIcon, ArrowRightIcon } from '../../components/ui/icons';
 import { timeOfDayGreeting } from '../../copy';
 import { formatLongDate } from '../../lib/formatDate';
 import { BalanceCard } from './BalanceCard';
 import { DocumentsView } from './DocumentsView';
 import { FxRatesPanel } from './FxRatesPanel';
 import { NewTransferModal } from './NewTransferModal';
+import { ReceivePage } from './ReceivePage';
 import { ReconciliationView } from './ReconciliationView';
 import { Sidebar, SidebarDrawer } from './Sidebar';
 import { TransfersTable } from './TransfersTable';
@@ -103,12 +104,14 @@ export function HomePage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all hover:bg-rose-500/10 hover:text-rose-400"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all"
             style={{
               backgroundColor: 'var(--color-surface-2)',
               borderColor: 'var(--color-border-subtle)',
               color: 'var(--color-text-secondary)',
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.color = 'var(--color-danger)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; e.currentTarget.style.color = 'var(--color-text-secondary)'; }}
           >
             <LogOutIcon size={14} color="currentColor" />
             <span>Logout</span>
@@ -121,6 +124,7 @@ export function HomePage() {
         {[
           { id: 'overview', label: 'Overview', icon: GridIcon },
           { id: 'transfers', label: 'Transfers', icon: SendIcon },
+          { id: 'receive', label: 'Receive', icon: ReceiveIcon },
           { id: 'documents', label: 'Documents', icon: DocumentIcon },
           { id: 'reconciliation', label: 'Reconciliation', icon: CardIcon },
           { id: 'settings', label: 'Settings', icon: GearIcon },
@@ -134,6 +138,8 @@ export function HomePage() {
               backgroundColor: activeTab === id ? 'var(--color-surface-2)' : 'transparent',
               color: activeTab === id ? 'var(--color-brand-600)' : 'var(--color-text-secondary)',
             }}
+            onMouseEnter={(e) => { if (activeTab !== id) e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; }}
+            onMouseLeave={(e) => { if (activeTab !== id) e.currentTarget.style.backgroundColor = 'transparent'; }}
           >
             <Icon size={14} color="currentColor" />
             <span>{label}</span>
@@ -145,6 +151,8 @@ export function HomePage() {
           onClick={() => router.push('/exchange')}
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors"
           style={{ backgroundColor: 'transparent', color: 'var(--color-text-secondary)' }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
         >
           <ArrowRightIcon size={14} color="currentColor" />
           <span>Exchange</span>
@@ -170,12 +178,14 @@ export function HomePage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all hover:bg-rose-500/10 hover:text-rose-400"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all"
             style={{
               backgroundColor: 'var(--color-surface-2)',
               borderColor: 'var(--color-border-subtle)',
               color: 'var(--color-text-secondary)',
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.color = 'var(--color-danger)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; e.currentTarget.style.color = 'var(--color-text-secondary)'; }}
           >
             <LogOutIcon size={14} color="currentColor" />
             <span>Logout</span>
@@ -218,11 +228,21 @@ export function HomePage() {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold transition-all hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold transition-all"
               style={{
                 backgroundColor: 'var(--color-surface-1)',
                 borderColor: 'var(--color-border-subtle)',
                 color: 'var(--color-text-secondary)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                e.currentTarget.style.color = 'var(--color-danger)';
+                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--color-surface-1)';
+                e.currentTarget.style.color = 'var(--color-text-secondary)';
+                e.currentTarget.style.borderColor = 'var(--color-border-subtle)';
               }}
               title="Sign out of your session"
             >
@@ -313,6 +333,8 @@ export function HomePage() {
           {activeTab === 'transfers' && (
             <TransfersPage onNewTransfer={() => handleOpenTransferModal('10,000', 'USD')} />
           )}
+
+          {activeTab === 'receive' && <ReceivePage />}
 
           {activeTab === 'documents' && <DocumentsView />}
 

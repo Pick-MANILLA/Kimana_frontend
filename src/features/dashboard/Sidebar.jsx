@@ -4,11 +4,12 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogoWithWordmark } from '../../components/ui/Logo';
 import { ThemeToggle } from '../../components/ui/ThemeToggle';
-import { ArrowRightIcon, CardIcon, DocumentIcon, GearIcon, GridIcon, LogOutIcon, SendIcon, ShieldIcon, XIcon } from '../../components/ui/icons';
+import { ArrowRightIcon, CardIcon, DocumentIcon, GearIcon, GridIcon, LogOutIcon, ReceiveIcon, SendIcon, ShieldIcon, XIcon } from '../../components/ui/icons';
 
 const NAV_ITEMS = [
   { id: 'overview', icon: GridIcon, label: 'Overview' },
   { id: 'transfers', icon: SendIcon, label: 'Transfers' },
+  { id: 'receive', icon: ReceiveIcon, label: 'Receive' },
   { id: 'documents', icon: DocumentIcon, label: 'Documents' },
   { id: 'reconciliation', icon: CardIcon, label: 'Reconciliation' },
 ];
@@ -48,6 +49,8 @@ function SidebarContent({ activeTab, onTabChange, onLogout, onNavigate }) {
                 <button
                   type="button"
                   onClick={() => handleTabChange(id)}
+                  onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; }}
+                  onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = 'transparent'; }}
                   className="w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors"
                   style={{
                     backgroundColor: isActive ? 'var(--color-surface-2)' : 'transparent',
@@ -69,6 +72,8 @@ function SidebarContent({ activeTab, onTabChange, onLogout, onNavigate }) {
               <button
                 type="button"
                 onClick={() => handleLinkNavigate(href)}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                 className="w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors"
                 style={{
                   backgroundColor: 'transparent',
@@ -90,8 +95,10 @@ function SidebarContent({ activeTab, onTabChange, onLogout, onNavigate }) {
         </div>
         <button
           type="button"
-          className="w-full flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-medium transition-colors hover:text-white"
+          className="w-full flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-medium transition-colors"
           style={{ color: 'var(--color-text-secondary)' }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; e.currentTarget.style.color = 'var(--color-text-primary)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--color-text-secondary)'; }}
         >
           <ShieldIcon size={16} color="var(--color-text-secondary)" />
           <span>Security & Audit</span>
@@ -99,6 +106,8 @@ function SidebarContent({ activeTab, onTabChange, onLogout, onNavigate }) {
         <button
           type="button"
           onClick={() => handleTabChange('settings')}
+          onMouseEnter={(e) => { if (activeTab !== 'settings') e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'; }}
+          onMouseLeave={(e) => { if (activeTab !== 'settings') e.currentTarget.style.backgroundColor = 'transparent'; }}
           className="w-full flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-medium transition-colors"
           style={{
             backgroundColor: activeTab === 'settings' ? 'var(--color-surface-2)' : 'transparent',
@@ -112,8 +121,10 @@ function SidebarContent({ activeTab, onTabChange, onLogout, onNavigate }) {
         <button
           type="button"
           onClick={onLogout}
-          className="w-full flex items-center gap-3.5 px-3.5 py-2 mt-2 rounded-xl text-xs font-semibold transition-all hover:bg-rose-500/10 hover:text-rose-400 group"
+          className="w-full flex items-center gap-3.5 px-3.5 py-2 mt-2 rounded-xl text-xs font-semibold transition-all hover:bg-rose-500/10 group"
           style={{ color: 'var(--color-text-secondary)' }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--color-danger)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--color-text-secondary)'; }}
           title="Sign out of your session"
         >
           <LogOutIcon size={16} color="currentColor" />

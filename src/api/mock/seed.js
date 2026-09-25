@@ -462,6 +462,8 @@ export function createMockStore() {
     },
     // Tracks external payout orders initiated from the /exchange page.
     settlementPayouts: [],
+    // Payment requests the customer has raised to be paid (issue #79).
+    collections: [],
   };
 }
 

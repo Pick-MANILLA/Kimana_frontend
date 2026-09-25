@@ -273,5 +273,29 @@ export function createLiveApiClient() {
 
       getTransactions: () => http('GET', '/settlement/transactions'),
     },
+
+    // Real: payment requests the customer raises to be paid (issue #79,
+    // Kimana_backend#80). NGN opens a one-off bank-transfer receive per
+    // request; USD pays into the customer's standing virtual account. The
+    // backend credits the ledger itself once its partner confirms the
+    // money — nothing here initiates or tracks that beyond polling `get`.
+    collections: {
+      /** input: { amount: Money, payerName?, note?, expiresAt?, idempotencyKey } */
+      create: (input) =>
+        http('POST', '/collections', {
+          amount: input.amount,
+          payerName: input.payerName,
+          note: input.note,
+          expiresAt: input.expiresAt,
+        }, { 'idempotency-key': input.idempotencyKey }),
+
+      list: () => http('GET', '/collections'),
+
+      get: (id) => http('GET', `/collections/${encodeURIComponent(id)}`),
+
+      cancel: (id) => http('POST', `/collections/${encodeURIComponent(id)}/cancel`),
+
+      getReceivingAccounts: () => http('GET', '/receiving-accounts'),
+    },
   };
 }

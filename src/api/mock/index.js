@@ -1,5 +1,6 @@
 import { auditApi } from './auditApi';
 import { authApi } from './authApi';
+import { collectionsApi } from './collectionsApi';
 import { dashboardApi } from './dashboardApi';
 import { tradeDocumentApi, opsTradeDocumentApi } from './documentsApi';
 import { ledgerApi } from './ledgerApi';
@@ -31,4 +32,5 @@ export const mockApiClient = {
   opsLedger: opsLedgerApi,
   opsTradeDocuments: opsTradeDocumentApi,
   settlement: settlementApi,
+  collections: collectionsApi,
 };
