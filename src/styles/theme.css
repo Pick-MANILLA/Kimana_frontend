@@ -24,17 +24,20 @@
 @import "tailwindcss";
 
 @theme static {
-  /* ---- Color: brand (Kimana Orange primary accent) ---- */
-  --color-brand-50: #fff4ed;
-  --color-brand-100: #ffe4d4;
-  --color-brand-200: #ffc5a8;
-  --color-brand-300: #ff9e70;
-  --color-brand-400: #ff7838;
-  --color-brand-500: #ff6b00;
-  --color-brand-600: #ff5500; /* primary orange brand accent */
-  --color-brand-700: #e04800;
-  --color-brand-800: #b83a00;
-  --color-brand-900: #822900; /* used as disabled dark button fill */
+  /* ---- Color: brand (Kimana crimson palette) ----
+   * Palette: #EE4540 #C72C41 #801336 #510A32 #2D142C. 500/600/800/900 are
+   * the palette values verbatim; 50-400 are tints of #EE4540 toward white
+   * and 700 sits between #C72C41 and #801336 for hover states. */
+  --color-brand-50: #fdeceb;
+  --color-brand-100: #fbd0ce;
+  --color-brand-200: #f7aaa7;
+  --color-brand-300: #f48b88;
+  --color-brand-400: #f2706c;
+  --color-brand-500: #ee4540;
+  --color-brand-600: #c72c41; /* primary brand accent */
+  --color-brand-700: #a3203b;
+  --color-brand-800: #801336;
+  --color-brand-900: #510a32; /* used as disabled dark button fill */
 
   /* ---- Color: semantic status ---- */
   --color-success: #22c55e;
@@ -48,15 +51,15 @@
   --color-on-info: #ffffff;
 
   /* ---- Color: default surfaces & text ---- */
-  --color-canvas: #0b0c10; /* page background, sidebar */
-  --color-surface-1: #151720; /* card / panel base */
-  --color-surface-2: #1e212d; /* nested surface: inputs, stat tiles, chips */
-  --color-border-subtle: #272a38;
+  --color-canvas: #0c050c; /* page background, sidebar */
+  --color-surface-1: rgba(45, 20, 44, 0.5); /* card / panel base */
+  --color-surface-2: rgba(255, 255, 255, 0.045); /* nested surface: inputs, stat tiles, chips */
+  --color-border-subtle: rgba(255, 255, 255, 0.09);
   --color-text-primary: #f3f4f6;
-  --color-text-secondary: #9ca3af;
-  --color-text-placeholder: #6b7280;
+  --color-text-secondary: #b3a1b0;
+  --color-text-placeholder: #7d6a7a;
   --color-text-on-brand: #ffffff;
-  --color-navbar-bg: rgba(11, 12, 16, 0.88);
+  --color-navbar-bg: rgba(12, 5, 12, 0.6);
 
   /* ---- Type scale (mobile-first, 360px baseline) ---- */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -104,19 +107,55 @@
 /* ---- Dynamic Theme Overrides ---- */
 :root,
 [data-theme="dark"] {
-  --color-canvas: #0b0c10;
-  --color-surface-1: #151720;
-  --color-surface-2: #1e212d;
-  --color-border-subtle: #272a38;
+  --color-canvas: #0c050c;
+  --color-surface-1: rgba(45, 20, 44, 0.5);
+  --color-surface-2: rgba(255, 255, 255, 0.045);
+  --color-border-subtle: rgba(255, 255, 255, 0.09);
   --color-text-primary: #f3f4f6;
-  --color-text-secondary: #9ca3af;
-  --color-text-placeholder: #6b7280;
+  --color-text-secondary: #b3a1b0;
+  --color-text-placeholder: #7d6a7a;
   --color-text-on-brand: #ffffff;
-  --color-navbar-bg: rgba(11, 12, 16, 0.88);
+  --color-navbar-bg: rgba(12, 5, 12, 0.6);
 
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.24);
   --shadow-raised: 0 8px 24px -4px rgb(0 0 0 / 0.4);
   --shadow-sheet: 0 -4px 20px -4px rgb(0 0 0 / 0.45);
+}
+
+/* ---- Dark mode: liquid glass ----
+ * Surfaces above are translucent in dark mode; these rules give them the
+ * blur + edge highlight that makes them read as glass, and give the page a
+ * faint brand glow behind them so there is something to refract. Boxes are
+ * styled inline with var(--color-surface-1), so they are matched by that. */
+:root:not([data-theme="light"]) body {
+  background:
+    radial-gradient(60rem 40rem at 0% -10%, rgb(199 44 65 / 0.12), transparent 60%),
+    radial-gradient(50rem 40rem at 100% 35%, rgb(128 19 54 / 0.14), transparent 60%),
+    radial-gradient(60rem 45rem at 25% 110%, rgb(81 10 50 / 0.2), transparent 60%),
+    var(--color-canvas);
+  background-attachment: fixed;
+}
+
+:root:not([data-theme="light"]) [style*="--color-surface-1"] {
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  /* !important because boxes set `background:` inline, which resets the
+     image layer; the colour itself still comes from the inline style. */
+  background-image: linear-gradient(
+    135deg,
+    rgb(255 255 255 / 0.07) 0%,
+    rgb(255 255 255 / 0.015) 40%,
+    transparent 60%,
+    rgb(238 69 64 / 0.04) 100%
+  ) !important;
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.12),
+    inset 0 -1px 0 0 rgb(255 255 255 / 0.02),
+    0 12px 32px -12px rgb(0 0 0 / 0.65);
+}
+
+:root:not([data-theme="light"]) [style*="--color-surface-2"] {
+  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.05);
 }
 
 [data-theme="light"] {

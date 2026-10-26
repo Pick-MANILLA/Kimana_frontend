@@ -34,8 +34,8 @@ export function HeroSection() {
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background: `
-              radial-gradient(ellipse 80% 60% at 50% 20%, rgba(11, 14, 20, 0.45) 0%, rgba(11, 14, 20, 0.85) 70%, var(--color-canvas) 100%),
-              linear-gradient(to bottom, rgba(11, 14, 20, 0.2) 0%, rgba(11, 14, 20, 0.7) 60%, var(--color-canvas) 100%)
+              radial-gradient(ellipse 80% 60% at 50% 20%, rgba(12, 5, 12, 0.45) 0%, rgba(12, 5, 12, 0.85) 70%, var(--color-canvas) 100%),
+              linear-gradient(to bottom, rgba(12, 5, 12, 0.2) 0%, rgba(12, 5, 12, 0.7) 60%, var(--color-canvas) 100%)
             `,
           }}
         />
@@ -56,8 +56,8 @@ export function HeroSection() {
           <div
             className="inline-flex items-center gap-2 rounded-full border px-4.5 py-1.5 text-xs font-extrabold tracking-widest uppercase mb-8 backdrop-blur-md"
             style={{
-              backgroundColor: 'rgba(255, 85, 0, 0.12)',
-              borderColor: 'rgba(255, 85, 0, 0.3)',
+              backgroundColor: 'rgba(238, 69, 64, 0.12)',
+              borderColor: 'rgba(238, 69, 64, 0.3)',
               color: 'var(--color-brand-400)',
             }}
           >
