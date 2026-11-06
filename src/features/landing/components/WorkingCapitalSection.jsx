@@ -14,7 +14,7 @@ export function WorkingCapitalSection() {
 
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-12 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+        <div data-reveal className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-12 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 mb-4">
               <Badge tone="warning">FUTURE VISION · IN DEVELOPMENT</Badge>
@@ -34,8 +34,10 @@ export function WorkingCapitalSection() {
         {/* Vision Pillars Grid */}
         <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-3">
           <div
-            className="rounded-2xl border p-8 flex flex-col justify-between"
+            data-reveal
+            className="rv-lift rounded-2xl border p-8 flex flex-col justify-between"
             style={{
+              '--rv-i': 0,
               backgroundColor: 'var(--color-canvas)',
               borderColor: 'var(--color-border-subtle)',
             }}
@@ -58,8 +60,10 @@ export function WorkingCapitalSection() {
           </div>
 
           <div
-            className="rounded-2xl border p-8 flex flex-col justify-between"
+            data-reveal
+            className="rv-lift rounded-2xl border p-8 flex flex-col justify-between"
             style={{
+              '--rv-i': 1,
               backgroundColor: 'var(--color-canvas)',
               borderColor: 'var(--color-border-subtle)',
             }}
@@ -82,8 +86,10 @@ export function WorkingCapitalSection() {
           </div>
 
           <div
-            className="rounded-2xl border p-8 flex flex-col justify-between"
+            data-reveal
+            className="rv-lift rounded-2xl border p-8 flex flex-col justify-between"
             style={{
+              '--rv-i': 2,
               backgroundColor: 'var(--color-canvas)',
               borderColor: 'var(--color-border-subtle)',
             }}

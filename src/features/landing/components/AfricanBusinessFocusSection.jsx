@@ -2,9 +2,9 @@ import { ArrowUpRightIcon, ShieldIcon } from '../../../components/ui/icons';
 
 export function AfricanBusinessFocusSection() {
   return (
-    <section id="solutions" className="py-28 border-b relative overflow-hidden" style={{ borderColor: 'var(--color-border-subtle)', backgroundColor: 'var(--color-canvas)' }}>
+    <section id="solutions" className="py-28 border-b relative overflow-hidden" style={{ borderColor: 'var(--color-border-subtle)', backgroundColor: 'transparent' }}>
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
-        <div className="mx-auto max-w-4xl text-center">
+        <div data-reveal className="mx-auto max-w-4xl text-center">
           <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-brand-400)' }}>
             ENGINEERED FOR AFRICAN COMMERCE
           </span>
@@ -21,8 +21,10 @@ export function AfricanBusinessFocusSection() {
         {/* 3 Value Pillars */}
         <div className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-3">
           <div
-            className="rounded-2xl border p-8 flex flex-col justify-between transition-all hover:border-brand-500/50"
+            data-reveal
+            className="rv-lift rounded-2xl border p-8 flex flex-col justify-between transition-all hover:border-brand-500/50"
             style={{
+              '--rv-i': 0,
               backgroundColor: 'var(--color-surface-1)',
               borderColor: 'var(--color-border-subtle)',
             }}
@@ -44,8 +46,10 @@ export function AfricanBusinessFocusSection() {
           </div>
 
           <div
-            className="rounded-2xl border p-8 flex flex-col justify-between transition-all hover:border-brand-500/50"
+            data-reveal
+            className="rv-lift rounded-2xl border p-8 flex flex-col justify-between transition-all hover:border-brand-500/50"
             style={{
+              '--rv-i': 1,
               backgroundColor: 'var(--color-surface-1)',
               borderColor: 'var(--color-border-subtle)',
             }}
@@ -67,8 +71,10 @@ export function AfricanBusinessFocusSection() {
           </div>
 
           <div
-            className="rounded-2xl border p-8 flex flex-col justify-between transition-all hover:border-brand-500/50"
+            data-reveal
+            className="rv-lift rounded-2xl border p-8 flex flex-col justify-between transition-all hover:border-brand-500/50"
             style={{
+              '--rv-i': 2,
               backgroundColor: 'var(--color-surface-1)',
               borderColor: 'var(--color-border-subtle)',
             }}

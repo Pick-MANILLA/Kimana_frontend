@@ -31,10 +31,12 @@ export function ProofBarSection() {
           {PRINCIPLES.map((p, idx) => (
             <div
               key={idx}
-              className="flex items-start gap-3.5 p-4 rounded-xl border transition-all"
+              data-reveal
+              className="rv-lift flex items-start gap-3.5 p-4 rounded-xl border transition-all"
               style={{
                 backgroundColor: 'var(--color-canvas)',
                 borderColor: 'var(--color-border-subtle)',
+                '--rv-i': idx,
               }}
             >
               <div

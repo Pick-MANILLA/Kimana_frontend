@@ -23,18 +23,18 @@ export function LogoMark({
       aria-label={`${brand.name} mark`}
     >
       <defs>
-        <linearGradient id="kimana-orange-main" x1="6" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FF6B00" />
-          <stop offset="100%" stopColor="#FF3800" />
+        <linearGradient id="kimana-mark-main" x1="6" y1="6" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#B9A6FF" />
+          <stop offset="100%" stopColor="#977DFF" />
         </linearGradient>
-        <linearGradient id="kimana-orange-glow" x1="13" y1="6" x2="34" y2="20" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FF8533" />
-          <stop offset="100%" stopColor="#FF5500" />
+        <linearGradient id="kimana-mark-glow" x1="13" y1="6" x2="34" y2="20" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFCCF2" />
+          <stop offset="100%" stopColor="#977DFF" />
         </linearGradient>
       </defs>
 
       {/* Left Pillar (Stability & Financial Infrastructure) */}
-      <rect x="6" y="6" width="6.5" height="28" rx="3.25" fill="url(#kimana-orange-main)" />
+      <rect x="6" y="6" width="6.5" height="28" rx="3.25" fill="url(#kimana-mark-main)" />
 
       {/* Upper Forward Arm (Cross-Border Flow & Growth) */}
       <rect
@@ -43,7 +43,7 @@ export function LogoMark({
         width="21"
         height="6.5"
         rx="3.25"
-        fill="url(#kimana-orange-glow)"
+        fill="url(#kimana-mark-glow)"
         transform="rotate(-42 13 20.75)"
       />
 

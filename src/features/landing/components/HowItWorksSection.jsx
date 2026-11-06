@@ -42,7 +42,7 @@ export function HowItWorksSection() {
     <section id="how-it-works" className="py-28 border-t relative overflow-hidden" style={{ borderColor: 'var(--color-border-subtle)', backgroundColor: 'var(--color-surface-1)' }}>
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         {/* Section Header */}
-        <div className="max-w-3xl">
+        <div data-reveal className="max-w-3xl">
           <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-brand-400)' }}>
             SIMPLE WORKFLOW
           </span>
@@ -56,9 +56,10 @@ export function HowItWorksSection() {
 
         {/* Franklin-Style Vertical Visual Storytelling Rows */}
         <div className="mt-20 flex flex-col gap-12">
-          {STEPS.map((step) => (
+          {STEPS.map((step, i) => (
             <div
               key={step.number}
+              data-reveal={i % 2 ? 'right' : 'left'}
               className="group rounded-2xl border p-8 sm:p-10 transition-all duration-300 hover:border-brand-500/50"
               style={{
                 backgroundColor: 'var(--color-canvas)',
@@ -104,6 +105,7 @@ export function HowItWorksSection() {
 
         {/* Bottom Banner */}
         <div
+          data-reveal="zoom"
           className="mt-16 flex flex-wrap items-center justify-between gap-6 rounded-2xl border p-8"
           style={{
             backgroundColor: 'var(--color-surface-2)',

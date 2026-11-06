@@ -8,7 +8,7 @@ export function FinalCtaSection() {
   const router = useRouter();
 
   return (
-    <section className="py-28 border-t relative overflow-hidden" style={{ borderColor: 'var(--color-border-subtle)', backgroundColor: 'var(--color-canvas)' }}>
+    <section className="py-28 border-t relative overflow-hidden" style={{ borderColor: 'var(--color-border-subtle)', backgroundColor: 'transparent' }}>
       {/* Background radial highlight */}
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[800px] opacity-15 blur-[140px]"
@@ -17,7 +17,7 @@ export function FinalCtaSection() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-6 lg:px-12 text-center relative z-10">
+      <div data-reveal="zoom" className="mx-auto max-w-7xl px-6 lg:px-12 text-center relative z-10">
         <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-brand-400)' }}>
           GET STARTED WITH KIMANA
         </span>

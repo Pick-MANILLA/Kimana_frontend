@@ -182,7 +182,7 @@ function CreateRequestModal({ onClose, onCreated }) {
             <p className="text-xs font-medium" style={{ color: 'var(--color-danger)' }}>{error}</p>
           )}
 
-          <Button type="submit" disabled={createMutation.isPending} className="w-full font-bold">
+          <Button type="submit" loading={createMutation.isPending} className="w-full font-bold">
             {createMutation.isPending ? <SpinnerIcon size={14} color="var(--color-text-on-brand)" /> : null}
             Create payment request
           </Button>
@@ -294,8 +294,7 @@ function RequestDetailPanel({ collection, onClose }) {
               type="button"
               onClick={() => cancelMutation.mutate()}
               disabled={cancelMutation.isPending}
-              className="w-full rounded-full border px-4 py-2.5 text-sm font-bold transition-opacity disabled:opacity-50"
-              style={{ borderColor: 'var(--color-danger)', color: 'var(--color-danger)' }}
+              className="k-btn k-btn--ghost w-full font-bold"
             >
               {cancelMutation.isPending ? 'Cancelling…' : 'Cancel request'}
             </button>

@@ -65,9 +65,9 @@ export function FxRatesPanel({ onGetFirmQuote, apiClient = api }) {
             className="bg-transparent text-xs font-bold focus:outline-none cursor-pointer"
             style={{ color: 'var(--color-brand-400)' }}
           >
-            <option value="USD" style={{ backgroundColor: 'var(--color-surface-1)', color: 'var(--color-text-primary)' }}>USD</option>
-            <option value="EUR" style={{ backgroundColor: 'var(--color-surface-1)', color: 'var(--color-text-primary)' }}>EUR</option>
-            <option value="GBP" style={{ backgroundColor: 'var(--color-surface-1)', color: 'var(--color-text-primary)' }}>GBP</option>
+            <option value="USD" style={{ backgroundColor: 'var(--color-surface-solid)', color: 'var(--color-text-primary)' }}>USD</option>
+            <option value="EUR" style={{ backgroundColor: 'var(--color-surface-solid)', color: 'var(--color-text-primary)' }}>EUR</option>
+            <option value="GBP" style={{ backgroundColor: 'var(--color-surface-solid)', color: 'var(--color-text-primary)' }}>GBP</option>
           </select>
         </div>
 

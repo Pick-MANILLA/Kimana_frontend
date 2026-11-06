@@ -84,8 +84,8 @@ export function DocumentsView() {
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
-                <span className="flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                  <CheckCircleIcon size={12} color="var(--color-success)" /> {doc.status}
+                <span className="k-chip">
+                  <CheckCircleIcon size={12} color="currentColor" /> {doc.status}
                 </span>
               </div>
             </div>

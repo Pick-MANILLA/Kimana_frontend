@@ -204,7 +204,7 @@ export function BusinessDetailsPage() {
         {mutation.isError && !errorShownOnFields ? <SaveErrorBanner error={mutation.error} /> : null}
 
         <div className="flex justify-end pt-2">
-          <Button type="submit" disabled={!isValid || mutation.isPending}>
+          <Button type="submit" disabled={!isValid} loading={mutation.isPending}>
             {mutation.isPending ? 'Saving…' : businessDetailsCopy.continue}
           </Button>
         </div>

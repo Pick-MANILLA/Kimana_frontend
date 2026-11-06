@@ -18,7 +18,7 @@ export function RequireSession({ children }) {
   }, [isLoading, isError, router]);
 
   if (isLoading) {
-    return <div className="min-h-screen" style={{ background: 'var(--color-canvas)' }} aria-hidden="true" />;
+    return <div className="min-h-screen" style={{ background: 'transparent' }} aria-hidden="true" />;
   }
 
   if (isError) return null;

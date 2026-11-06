@@ -24,8 +24,20 @@
     font-size: var(--text-base);
     line-height: var(--text-base--line-height);
     color: var(--color-text-primary);
-    background: var(--color-canvas);
+    /* Palette gradient, fixed so it stays put while content scrolls
+       underneath the frosted-glass cards. */
+    background-color: var(--color-page-base);
+    background-image: var(--gradient-page);
+    background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* Native dropdown popups can't render translucent glass — give them an
+     opaque surface so option text stays readable. */
+  option,
+  optgroup {
+    background-color: var(--color-surface-solid);
+    color: var(--color-text-primary);
   }
 
   /* Visible focus for keyboard users — never suppressed anywhere in this app */
@@ -42,4 +54,224 @@
       scroll-behavior: auto !important;
     }
   }
+}
+
+/*
+ * Frosted glass. Every card/panel in the app paints itself with
+ * var(--color-surface-1) via an inline style, so that token is the hook:
+ * any element using it gets the blur, without a class on ~60 call sites.
+ * Lives in the components layer so Tailwind utilities still win.
+ */
+@layer components {
+  [style*="--color-surface-1"]:not(option) {
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  }
+
+  /* Glass edge highlight. Set as Tailwind's inset-shadow slot too, so
+     cards that also use a shadow-* utility keep both. */
+  [style*="--color-surface-1"][style*="--color-border-subtle"]:not(option) {
+    --tw-inset-shadow: var(--glass-highlight);
+    box-shadow: var(--glass-highlight);
+  }
+}
+
+
+/*
+ * Buttons — soft pill states (see src/components/ui/Button.jsx).
+ * Raw <button>s can opt in with `k-btn k-btn--solid|k-btn--ghost`.
+ */
+:root,
+[data-theme="dark"] {
+  --btn-solid-bg: linear-gradient(180deg, #ad99ff 0%, #977dff 55%, #8466f5 100%);
+  --btn-solid-fg: #00033d;
+  --btn-solid-glow: rgba(151, 125, 255, 0.5);
+  --btn-ghost-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.035) 100%);
+  --btn-ghost-bg-hover: linear-gradient(180deg, rgba(255, 255, 255, 0.17) 0%, rgba(255, 255, 255, 0.06) 100%);
+  --btn-ghost-border: rgba(255, 255, 255, 0.16);
+  --btn-ghost-fg: var(--color-text-primary);
+  --btn-drop: 0 10px 24px -10px rgba(0, 0, 0, 0.7);
+  --btn-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  --btn-ring: rgba(151, 125, 255, 0.45);
+  --btn-chip-bg: rgba(255, 255, 255, 0.9);
+  --btn-chip-fg: #4b33c9;
+}
+
+[data-theme="light"] {
+  --btn-solid-bg: linear-gradient(180deg, #8a70fb 0%, #6b4ef0 55%, #5a3de0 100%);
+  --btn-solid-fg: #ffffff;
+  --btn-solid-glow: rgba(107, 78, 240, 0.42);
+  --btn-ghost-bg: linear-gradient(180deg, rgba(236, 236, 238, 0.6) 0%, rgba(226, 226, 230, 0.35) 100%);
+  --btn-ghost-bg-hover: linear-gradient(180deg, rgba(240, 240, 242, 0.75) 0%, rgba(228, 224, 240, 0.5) 100%);
+  --btn-ghost-border: rgba(0, 3, 61, 0.12);
+  --btn-ghost-fg: #00033d;
+  --btn-drop: 0 10px 22px -12px rgba(75, 51, 201, 0.45);
+  --btn-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  --btn-ring: rgba(107, 78, 240, 0.4);
+  --btn-chip-bg: #ececee;
+  --btn-chip-fg: #4b33c9;
+}
+
+@layer components {
+  .k-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.625rem 1.5rem;
+    font-size: var(--text-sm);
+    line-height: 1.25rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      transform 0.25s var(--ease-standard),
+      box-shadow 0.25s var(--ease-standard),
+      background 0.25s var(--ease-standard),
+      border-color 0.25s var(--ease-standard),
+      filter 0.25s var(--ease-standard);
+  }
+
+  .k-btn svg {
+    transition: transform 0.25s var(--ease-standard);
+  }
+
+  /* default */
+  .k-btn--solid {
+    background: var(--btn-solid-bg);
+    color: var(--btn-solid-fg);
+    box-shadow: 0 10px 26px -10px var(--btn-solid-glow), var(--btn-sheen), inset 0 -2px 6px rgba(0, 3, 61, 0.18);
+  }
+
+  .k-btn--ghost {
+    background: var(--btn-ghost-bg);
+    color: var(--btn-ghost-fg);
+    border-color: var(--btn-ghost-border);
+    box-shadow: var(--btn-drop), var(--btn-sheen);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  /* hover */
+  .k-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  .k-btn:hover:not(:disabled) svg:last-of-type {
+    transform: translateX(2px);
+  }
+  .k-btn--solid:hover:not(:disabled) {
+    filter: brightness(1.07);
+    box-shadow: 0 14px 32px -10px var(--btn-solid-glow), var(--btn-sheen), inset 0 -2px 6px rgba(0, 3, 61, 0.18);
+  }
+  .k-btn--ghost:hover:not(:disabled) {
+    background: var(--btn-ghost-bg-hover);
+  }
+
+  /* focus: violet glow ring (keyboard only) */
+  .k-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--btn-ring), 0 0 24px 2px var(--btn-ring), var(--btn-sheen);
+  }
+
+  /* pressed: sinks in, violet outline */
+  .k-btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
+  .k-btn--solid:active:not(:disabled) {
+    filter: brightness(0.96);
+    box-shadow: inset 0 2px 8px rgba(0, 3, 61, 0.35), 0 4px 12px -8px var(--btn-solid-glow);
+  }
+  .k-btn--ghost:active:not(:disabled) {
+    border-color: var(--color-brand-400);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px var(--color-brand-400), 0 8px 20px -10px var(--btn-solid-glow);
+  }
+
+  /* loading / success: trailing chip, like the template's circle icon */
+  .k-btn[data-state="loading"] {
+    cursor: progress;
+  }
+  /* pinned to the right edge, like the template's circle icon */
+  .k-btn-chip {
+    position: absolute;
+    right: 0.35rem;
+    top: 50%;
+    translate: 0 -50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    background: var(--btn-chip-bg);
+    color: var(--btn-chip-fg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    flex-shrink: 0;
+  }
+  .k-btn-spinner {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 9999px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    animation: k-spin 0.7s linear infinite;
+  }
+
+  /* disabled (not while loading, which keeps full colour) */
+  .k-btn:disabled:not([data-state="loading"]) {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: saturate(0.6);
+    box-shadow: none;
+  }
+
+  /*
+   * Chips / status pills — one uniform colour everywhere (Badge.jsx and
+   * inline chips). Status is carried by the label, not by colour.
+   */
+  .k-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+    font-size: var(--text-xs);
+    line-height: 1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--chip-fg);
+    background: var(--chip-bg);
+    border: 1px solid var(--chip-border);
+  }
+  .k-chip-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 9999px;
+    background: currentColor;
+  }
+}
+
+:root,
+[data-theme="dark"] {
+  --chip-fg: #c3b5ff;
+  --chip-bg: rgba(151, 125, 255, 0.14);
+  --chip-border: rgba(151, 125, 255, 0.32);
+}
+
+[data-theme="light"] {
+  --chip-fg: #4b33c9;
+  --chip-bg: rgba(236, 236, 238, 0.35);
+  --chip-border: rgba(107, 78, 240, 0.3);
+}
+
+/* Unlayered so it beats callers' px-* utilities: symmetric room for the
+   right-edge chip keeps the label centred. */
+.k-btn[data-state] {
+  padding-inline: 2.6rem;
+}
+
+@keyframes k-spin {
+  to { transform: rotate(360deg); }
 }

@@ -43,7 +43,7 @@ export function LoginPage() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-4 py-12 font-sans relative overflow-hidden"
-      style={{ backgroundColor: 'var(--color-canvas)' }}
+      style={{ backgroundColor: 'transparent' }}
     >
       {/* Background ambient spotlight */}
       <div
@@ -124,7 +124,7 @@ export function LoginPage() {
             <Button
               type="submit"
               className="w-full py-3 text-base font-bold mt-2"
-              disabled={mutation.isPending}
+              loading={mutation.isPending}
             >
               {mutation.isPending ? 'Signing in…' : 'Sign in'} <ArrowRightIcon size={16} />
             </Button>

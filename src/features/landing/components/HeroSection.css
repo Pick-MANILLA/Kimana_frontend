@@ -1,0 +1,78 @@
+/*
+ * Hero animated scenes. Plays once on load, in order:
+ *   1. the big Kimana logo drops in
+ *   2. "Cross-border payments." rises word by word out of a blur
+ *   3. supporting copy, buttons, then the product preview fade up
+ * Then an ambient loop: a breathing glow behind the headline.
+ *
+ * Every entrance uses fill-mode `both`, so under prefers-reduced-motion
+ * (globals.css collapses durations) everything simply appears in place.
+ */
+
+.hero-scene {
+  --hero-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---- Headline typography ---- */
+.hero-title {
+  font-family: var(--font-display);
+  /* Bodoni's largest optical size has hairlines so thin the hyphen and comma
+     vanish on screen; pin a sturdier cut. */
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 28;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+}
+
+/* ---- 1. Logo ---- */
+.hero-logo {
+  animation: hero-drop 0.9s var(--hero-ease) 0.05s both;
+}
+
+/* ---- 2. Line one, word by word ---- */
+.hero-word {
+  display: inline-block;
+  animation: hero-rise 1s var(--hero-ease) both;
+  animation-delay: calc(0.35s + var(--i) * 0.12s);
+}
+
+/* ---- 3. Supporting content ---- */
+.hero-fade-up {
+  animation: hero-fade-up 0.9s var(--hero-ease) both;
+  animation-delay: var(--d, 1.3s);
+}
+
+/* ---- Ambient glow behind the headline ---- */
+.hero-glow {
+  animation:
+    hero-glow-in 2s ease-out both,
+    hero-breathe 7s ease-in-out 2s infinite alternate;
+}
+
+/* ---- Keyframes ---- */
+@keyframes hero-drop {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(0.55em) rotate(2deg); filter: blur(10px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@keyframes hero-fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hero-glow-in {
+  from { opacity: 0; }
+  to { opacity: 0.15; }
+}
+
+@keyframes hero-breathe {
+  /* `scale` (not transform) so Tailwind's translate centring is untouched */
+  from { opacity: 0.15; scale: 1; }
+  to { opacity: 0.26; scale: 1.12; }
+}

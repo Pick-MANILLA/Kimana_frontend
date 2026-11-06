@@ -17,7 +17,7 @@ export function OnboardingLayout({ stepIndex, title, subtitle, children }) {
   const backTarget = ONBOARDING_BACK_ROUTES[stepIndex] ?? '/';
 
   return (
-    <div className="min-h-screen px-gutter py-8" style={{ background: 'var(--color-canvas)' }}>
+    <div className="min-h-screen px-gutter py-8" style={{ background: 'transparent' }}>
       <div className="mx-auto max-w-2xl">
         <div className="flex items-center justify-between mb-6">
           <BackButton to={backTarget} />
