@@ -581,9 +581,9 @@ function ConvertInFlow({ localBalances, onConversionComplete }) {
               <Button variant="outline" onClick={handleRequote} className="flex-1" disabled={confirmLoading}>
                 {exchangeCopy.quote.back}
               </Button>
-              <Button onClick={handleConfirm} className="flex-1" disabled={confirmLoading}>
+              <Button onClick={handleConfirm} className="flex-1" loading={confirmLoading}>
                 {confirmLoading ? (
-                  <><SpinnerIcon size={14} color="currentColor" /> {exchangeCopy.quote.processing}</>
+                  exchangeCopy.quote.processing
                 ) : exchangeCopy.quote.confirm}
               </Button>
             </>
@@ -640,9 +640,9 @@ function ConvertInFlow({ localBalances, onConversionComplete }) {
 
       <ErrorBanner message={error} />
 
-      <Button onClick={handleGetQuote} disabled={quoteLoading} className="w-full">
+      <Button onClick={handleGetQuote} loading={quoteLoading} className="w-full">
         {quoteLoading ? (
-          <><SpinnerIcon size={14} color="currentColor" /> {exchangeCopy.convertIn.loadingRate}</>
+          exchangeCopy.convertIn.loadingRate
         ) : exchangeCopy.convertIn.getQuote}
       </Button>
     </div>
@@ -819,9 +819,9 @@ function ConvertOutFlow({ settlementBalance, onConversionComplete }) {
               <Button variant="outline" onClick={handleRequote} className="flex-1" disabled={confirmLoading}>
                 {exchangeCopy.quote.back}
               </Button>
-              <Button onClick={handleConfirm} className="flex-1" disabled={confirmLoading}>
+              <Button onClick={handleConfirm} className="flex-1" loading={confirmLoading}>
                 {confirmLoading
-                  ? <><SpinnerIcon size={14} color="currentColor" /> {exchangeCopy.quote.processing}</>
+                  ? exchangeCopy.quote.processing
                   : exchangeCopy.quote.confirm}
               </Button>
             </>
@@ -875,9 +875,9 @@ function ConvertOutFlow({ settlementBalance, onConversionComplete }) {
 
       <ErrorBanner message={error} />
 
-      <Button onClick={handleGetQuote} disabled={quoteLoading} className="w-full">
+      <Button onClick={handleGetQuote} loading={quoteLoading} className="w-full">
         {quoteLoading
-          ? <><SpinnerIcon size={14} color="currentColor" /> {exchangeCopy.convertOut.loadingRate}</>
+          ? exchangeCopy.convertOut.loadingRate
           : exchangeCopy.convertOut.getQuote}
       </Button>
     </div>
@@ -1140,9 +1140,9 @@ function ExternalPayoutFlow({ settlementBalance, onPayoutSubmitted }) {
               <Button variant="outline" onClick={handleRequote} className="flex-1" disabled={confirmLoading}>
                 {exchangeCopy.quote.back}
               </Button>
-              <Button onClick={handleConfirm} className="flex-1" disabled={confirmLoading}>
+              <Button onClick={handleConfirm} className="flex-1" loading={confirmLoading}>
                 {confirmLoading
-                  ? <><SpinnerIcon size={14} color="currentColor" /> {exchangeCopy.quote.processing}</>
+                  ? exchangeCopy.quote.processing
                   : exchangeCopy.quote.confirm}
               </Button>
             </>
@@ -1197,9 +1197,9 @@ function ExternalPayoutFlow({ settlementBalance, onPayoutSubmitted }) {
 
       <ErrorBanner message={error} />
 
-      <Button onClick={handleGetQuote} disabled={quoteLoading} className="w-full">
+      <Button onClick={handleGetQuote} loading={quoteLoading} className="w-full">
         {quoteLoading
-          ? <><SpinnerIcon size={14} color="currentColor" /> Loading…</>
+          ? 'Loading…'
           : exchangeCopy.payout.getQuote}
       </Button>
     </div>
@@ -1244,7 +1244,7 @@ export function ExchangePage() {
   return (
     <div
       className="min-h-screen flex flex-col font-sans"
-      style={{ background: 'var(--color-canvas)', color: 'var(--color-text-primary)' }}
+      style={{ background: 'transparent', color: 'var(--color-text-primary)' }}
     >
       <ExchangeHeader onBack={handleBack} />
 

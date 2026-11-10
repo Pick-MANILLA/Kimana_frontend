@@ -95,7 +95,7 @@ export function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row font-sans" style={{ background: 'var(--color-canvas)', color: 'var(--color-text-primary)' }}>
+    <div className="min-h-screen flex flex-col lg:flex-row font-sans" style={{ background: 'transparent', color: 'var(--color-text-primary)' }}>
       {/* Mobile Top Header (phones only — tablet gets its own toolbar below) */}
       <div className="flex md:hidden items-center justify-between px-4 py-3 border-b" style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}>
         <LogoWithWordmark size={26} />

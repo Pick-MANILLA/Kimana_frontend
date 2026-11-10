@@ -38,7 +38,7 @@ export function LandingNavbar() {
         <nav className="hidden items-center gap-6 lg:flex">
           <button
             type="button"
-            onClick={() => handleNavClick('product')}
+            onClick={() => handleNavClick('payment-certainty')}
             className="text-sm font-medium transition-colors hover:opacity-100"
             style={{ color: 'var(--color-text-secondary)' }}
           >
@@ -124,7 +124,7 @@ export function LandingNavbar() {
           <div className="flex flex-col gap-4">
             <button
               type="button"
-              onClick={() => handleNavClick('product')}
+              onClick={() => handleNavClick('payment-certainty')}
               className="flex items-center justify-between text-left text-base font-medium py-2.5 border-b"
               style={{
                 color: 'var(--color-text-primary)',

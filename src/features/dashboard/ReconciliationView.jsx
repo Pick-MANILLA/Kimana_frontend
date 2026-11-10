@@ -63,8 +63,8 @@ export function ReconciliationView() {
               </div>
               <div className="mt-2.5 flex items-center justify-between gap-3 border-t pt-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
                 <p className="font-bold text-sm" style={{ color: 'var(--color-text-primary)' }}>{row.amount}</p>
-                <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                  <CheckCircleIcon size={12} color="var(--color-success)" /> {row.recStatus}
+                <span className="k-chip">
+                  <CheckCircleIcon size={12} color="currentColor" /> {row.recStatus}
                 </span>
               </div>
             </div>
@@ -91,8 +91,8 @@ export function ReconciliationView() {
                   <td className="py-3.5 px-4 font-bold" style={{ color: 'var(--color-text-primary)' }}>{row.amount}</td>
                   <td className="py-3.5 px-4 text-xs font-semibold text-emerald-400">{row.status}</td>
                   <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                      <CheckCircleIcon size={12} color="var(--color-success)" /> {row.recStatus}
+                    <span className="k-chip">
+                      <CheckCircleIcon size={12} color="currentColor" /> {row.recStatus}
                     </span>
                   </td>
                 </tr>

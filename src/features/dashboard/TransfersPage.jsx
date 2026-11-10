@@ -621,13 +621,7 @@ export function TransfersPage({ onNewTransfer }) {
             type="button"
             onClick={() => exportMutation.mutate()}
             disabled={exportMutation.isPending}
-            className="flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-semibold transition-opacity disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2"
-            style={{
-              background: 'var(--color-surface-1)',
-              borderColor: 'var(--color-border-subtle)',
-              color: 'var(--color-text-secondary)',
-              cursor: exportMutation.isPending ? 'not-allowed' : 'pointer',
-            }}
+            className="k-btn k-btn--ghost px-4 py-2 text-xs"
           >
             {exportMutation.isPending
               ? <SpinnerIcon size={13} color="currentColor" />
@@ -666,11 +660,7 @@ export function TransfersPage({ onNewTransfer }) {
             <button
               type="button"
               onClick={clearFilters}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
-              style={{
-                background: 'var(--color-surface-2)',
-                color: 'var(--color-text-secondary)',
-              }}
+              className="k-btn k-btn--ghost gap-1.5 px-3 py-2 text-xs"
             >
               <XIcon size={11} color="currentColor" />
               {transfersPageCopy.clearFilters}

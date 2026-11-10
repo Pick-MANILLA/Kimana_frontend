@@ -1,0 +1,64 @@
+/*
+ * "Know where your money is" — auto-advancing stage carousel.
+ * The progress bar's duration (--pc-dwell, set from DWELL_MS in the JSX) is
+ * the timer: its animationend selects the next stage, and pausing the bar
+ * (hover / focus / off-screen) pauses the carousel.
+ */
+
+/* Stage boxes: glide between selected / unselected */
+.pc-stage {
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.5s ease,
+    border-color 0.5s ease,
+    box-shadow 0.5s ease;
+}
+
+.pc-stage[aria-pressed="true"] {
+  box-shadow: 0 12px 30px -16px rgba(151, 125, 255, 0.55);
+}
+
+.pc-stage > div > span:first-child {
+  transition: background-color 0.5s ease, color 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pc-stage[aria-pressed="true"] > div > span:first-child {
+  transform: scale(1.08);
+}
+
+/* Dwell progress line along the bottom of the active stage */
+.pc-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, #977dff, #ffccf2);
+  animation: pc-progress var(--pc-dwell, 6000ms) linear both;
+}
+
+/* Detail panel: replays on every stage change */
+.pc-panel {
+  animation: pc-panel-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pc-card {
+  animation: pc-card-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(0.12s + var(--pc-i, 0) * 0.08s);
+}
+
+@keyframes pc-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes pc-panel-in {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@keyframes pc-card-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}

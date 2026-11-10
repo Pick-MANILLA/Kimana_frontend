@@ -42,8 +42,8 @@ export function HeroProductPreview() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="flex items-center gap-2 rounded-full px-3.5 py-1 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="k-chip">
+            <span className="k-chip-dot animate-pulse" />
             Live Rate Lock (1 USD = 1,485.00 NGN)
           </span>
         </div>
@@ -237,7 +237,7 @@ export function HeroProductPreview() {
                     <div className="text-[11px] text-neutral-400">Building verified trade history</div>
                   </div>
                 </div>
-                <span className="text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                <span className="k-chip">
                   In Progress
                 </span>
               </div>

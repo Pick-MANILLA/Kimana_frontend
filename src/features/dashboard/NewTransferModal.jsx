@@ -426,11 +426,9 @@ export function NewTransferModal({
                   <Button
                     type="button"
                     className="shrink-0"
-                    style={{ background: 'var(--color-on-warning)', color: 'var(--color-warning)' }}
                     onClick={handleRefreshQuote}
-                    disabled={isRefreshingQuote}
+                    loading={isRefreshingQuote}
                   >
-                    {isRefreshingQuote ? <SpinnerIcon size={14} /> : null}
                     {isRefreshingQuote ? 'Refreshing...' : 'Refresh Quote'}
                   </Button>
                 </div>

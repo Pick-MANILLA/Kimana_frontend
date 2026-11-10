@@ -1,8 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Badge } from '../../../components/ui/Badge';
 import { CheckCircleIcon, ShieldIcon } from '../../../components/ui/icons';
+import './PaymentCertaintySection.css';
+
+// How long each stage stays selected before auto-advancing. The timing is
+// driven by the CSS progress bar (its `animationend` advances the stage), so
+// pausing the bar pauses the carousel too. Keep in sync with --pc-dwell.
+const DWELL_MS = 6000;
+
+const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
+function subscribeReducedMotion(onChange) {
+  const mq = window.matchMedia(REDUCED_MOTION);
+  mq.addEventListener('change', onChange);
+  return () => mq.removeEventListener('change', onChange);
+}
+function useReducedMotion() {
+  return useSyncExternalStore(
+    subscribeReducedMotion,
+    () => window.matchMedia(REDUCED_MOTION).matches,
+    () => false,
+  );
+}
 
 const STAGES = [
   {
@@ -92,15 +112,39 @@ const STAGES = [
 ];
 
 export function PaymentCertaintySection() {
-  const [selectedStage, setSelectedStage] = useState(STAGES[0]);
+  const [index, setIndex] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [inView, setInView] = useState(false);
+  const reducedMotion = useReducedMotion();
+  const sectionRef = useRef(null);
+  const selectedStage = STAGES[index];
+
+  // Only cycle while the section is actually on screen.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return undefined;
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.25 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const autoplay = !reducedMotion;
+  const running = autoplay && inView && !hovered && !focused;
+  const advance = () => setIndex((i) => (i + 1) % STAGES.length);
 
   return (
-    <section id="payment-certainty" className="py-28 border-t border-b relative" style={{ borderColor: 'var(--color-border-subtle)' }}>
+    <section
+      ref={sectionRef}
+      id="payment-certainty"
+      className="py-28 border-t border-b relative"
+      style={{ borderColor: 'var(--color-border-subtle)', '--pc-dwell': `${DWELL_MS}ms` }}
+    >
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         {/* Editorial Section Header */}
-        <div className="max-w-3xl">
+        <div data-reveal className="max-w-3xl">
           <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-brand-400)' }}>
-            SECTION A · END-TO-END VISIBILITY
+            END-TO-END VISIBILITY
           </span>
           <h2 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl" style={{ color: 'var(--color-text-primary)' }}>
             Know where your money is.
@@ -111,17 +155,26 @@ export function PaymentCertaintySection() {
         </div>
 
         {/* Visual Transfer Timeline Grid */}
-        <div className="mt-16 grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
+        <div
+          className="mt-16 grid grid-cols-1 gap-8 lg:grid-cols-12 items-start"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onFocus={() => setFocused(true)}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false);
+          }}
+        >
           {/* Timeline Steps Navigation Sidebar */}
-          <div className="lg:col-span-5 flex flex-col gap-3">
-            {STAGES.map((stage) => {
-              const isSelected = selectedStage.id === stage.id;
+          <div data-reveal="left" className="lg:col-span-5 flex flex-col gap-3">
+            {STAGES.map((stage, i) => {
+              const isSelected = i === index;
               return (
                 <button
                   key={stage.id}
                   type="button"
-                  onClick={() => setSelectedStage(stage)}
-                  className="flex items-center justify-between rounded-xl border p-4 text-left transition-all hover:border-brand-500/50"
+                  aria-pressed={isSelected}
+                  onClick={() => setIndex(i)}
+                  className="pc-stage relative overflow-hidden flex items-center justify-between rounded-xl border p-4 text-left hover:border-brand-500/50"
                   style={{
                     backgroundColor: isSelected ? 'var(--color-surface-2)' : 'var(--color-surface-1)',
                     borderColor: isSelected ? 'var(--color-brand-600)' : 'var(--color-border-subtle)',
@@ -151,13 +204,24 @@ export function PaymentCertaintySection() {
                   <Badge tone={stage.statusBadge}>
                     {stage.timeEstimate}
                   </Badge>
+
+                  {/* Dwell progress: when it finishes, the next stage is selected. */}
+                  {isSelected && autoplay ? (
+                    <span
+                      key={`progress-${index}`}
+                      className="pc-progress"
+                      aria-hidden="true"
+                      style={{ animationPlayState: running ? 'running' : 'paused' }}
+                      onAnimationEnd={advance}
+                    />
+                  ) : null}
                 </button>
               );
             })}
           </div>
 
           {/* Stage Details Display */}
-          <div className="lg:col-span-7">
+          <div data-reveal="right" className="lg:col-span-7" style={{ '--rv-i': 1 }}>
             <div
               className="rounded-2xl border p-6 sm:p-8"
               style={{
@@ -165,6 +229,8 @@ export function PaymentCertaintySection() {
                 borderColor: 'var(--color-border-subtle)',
               }}
             >
+              {/* Re-keyed per stage so the enter transition replays on every switch */}
+              <div key={selectedStage.id} className="pc-panel">
               <div className="flex flex-col items-start gap-3 border-b pb-4 sm:flex-row sm:items-center sm:justify-between" style={{ borderColor: 'var(--color-border-subtle)' }}>
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="text-2xl font-bold" style={{ color: 'var(--color-brand-400)' }}>
@@ -174,8 +240,8 @@ export function PaymentCertaintySection() {
                     {selectedStage.title} State
                   </h3>
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5 text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                  <CheckCircleIcon size={14} color="var(--color-success)" /> Verified Lifecycle State
+                <div className="k-chip shrink-0">
+                  <CheckCircleIcon size={14} color="currentColor" /> Verified Lifecycle State
                 </div>
               </div>
 
@@ -188,10 +254,11 @@ export function PaymentCertaintySection() {
                 {selectedStage.details.map((detail, idx) => (
                   <div
                     key={idx}
-                    className="rounded-xl border p-3.5"
+                    className="pc-card rounded-xl border p-3.5"
                     style={{
                       backgroundColor: 'var(--color-canvas)',
                       borderColor: 'var(--color-border-subtle)',
+                      '--pc-i': idx,
                     }}
                   >
                     <span className="text-[11px] font-medium" style={{ color: 'var(--color-text-secondary)' }}>
@@ -217,6 +284,7 @@ export function PaymentCertaintySection() {
                 <div className="mt-2 text-xs leading-normal" style={{ color: 'var(--color-text-secondary)' }}>
                   State changes are validated across dual-entry accounting ledgers to prevent unverified fund movements or hanging transactions.
                 </div>
+              </div>
               </div>
             </div>
           </div>

@@ -24,20 +24,20 @@
 @import "tailwindcss";
 
 @theme static {
-  /* ---- Color: brand (Kimana crimson palette) ----
-   * Palette: #EE4540 #C72C41 #801336 #510A32 #2D142C. 500/600/800/900 are
-   * the palette values verbatim; 50-400 are tints of #EE4540 toward white
-   * and 700 sits between #C72C41 and #801336 for hover states. */
-  --color-brand-50: #fdeceb;
-  --color-brand-100: #fbd0ce;
-  --color-brand-200: #f7aaa7;
-  --color-brand-300: #f48b88;
-  --color-brand-400: #f2706c;
-  --color-brand-500: #ee4540;
-  --color-brand-600: #c72c41; /* primary brand accent */
-  --color-brand-700: #a3203b;
-  --color-brand-800: #801336;
-  --color-brand-900: #510a32; /* used as disabled dark button fill */
+  /* ---- Color: brand (violet accent, built around #977DFF) ----
+   * Palette: #F2E6FF lavender, #FFCCF2 pink, #977DFF violet, #00033D navy.
+   * 600 is the primary accent; the light theme deepens 600/700 below so
+   * violet text stays readable on the pale background. */
+  --color-brand-50: #f6f3ff;
+  --color-brand-100: #ede8ff;
+  --color-brand-200: #dcd3ff;
+  --color-brand-300: #c3b5ff;
+  --color-brand-400: #ad99ff;
+  --color-brand-500: #a28bff;
+  --color-brand-600: #977dff; /* primary violet brand accent */
+  --color-brand-700: #7d62f0;
+  --color-brand-800: #6247d1;
+  --color-brand-900: #5c5490; /* used as disabled button fill */
 
   /* ---- Color: semantic status ---- */
   --color-success: #22c55e;
@@ -51,19 +51,21 @@
   --color-on-info: #ffffff;
 
   /* ---- Color: default surfaces & text ---- */
-  --color-canvas: #0c050c; /* page background, sidebar */
-  --color-surface-1: rgba(45, 20, 44, 0.5); /* card / panel base */
-  --color-surface-2: rgba(255, 255, 255, 0.045); /* nested surface: inputs, stat tiles, chips */
-  --color-border-subtle: rgba(255, 255, 255, 0.09);
-  --color-text-primary: #f3f4f6;
-  --color-text-secondary: #b3a1b0;
-  --color-text-placeholder: #7d6a7a;
-  --color-text-on-brand: #ffffff;
-  --color-navbar-bg: rgba(12, 5, 12, 0.6);
+  --color-canvas: rgba(0, 2, 32, 0.35); /* tinted well / sidebar over the page gradient */
+  --color-surface-1: rgba(255, 255, 255, 0.06); /* frosted-glass card / panel (blur in globals.css) */
+  --color-surface-2: rgba(255, 255, 255, 0.08); /* nested surface: inputs, stat tiles, chips */
+  --color-surface-solid: #0d0f4f; /* opaque surface for native <option> popups */
+  --color-border-subtle: rgba(255, 255, 255, 0.12);
+  --color-text-primary: #f5f2ff;
+  --color-text-secondary: #b8b2de;
+  --color-text-placeholder: #8a84b8;
+  --color-text-on-brand: #00033d;
+  --color-navbar-bg: rgba(0, 3, 61, 0.55);
 
   /* ---- Type scale (mobile-first, 360px baseline) ---- */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+  --font-display: var(--font-bodoni), "Bodoni Moda", Didot, "Bodoni 72", Georgia, serif;
 
   --text-xs: 0.75rem;
   --text-xs--line-height: 1rem;
@@ -107,70 +109,67 @@
 /* ---- Dynamic Theme Overrides ---- */
 :root,
 [data-theme="dark"] {
-  --color-canvas: #0c050c;
-  --color-surface-1: rgba(45, 20, 44, 0.5);
-  --color-surface-2: rgba(255, 255, 255, 0.045);
-  --color-border-subtle: rgba(255, 255, 255, 0.09);
-  --color-text-primary: #f3f4f6;
-  --color-text-secondary: #b3a1b0;
-  --color-text-placeholder: #7d6a7a;
-  --color-text-on-brand: #ffffff;
-  --color-navbar-bg: rgba(12, 5, 12, 0.6);
+  /* Charcoal: #1e2023 → #47484c → royal charcoal → #47484c → #1e2023, top to bottom. */
+  --color-royal-charcoal: #2f3142;
+  --color-page-base: #1e2023;
+  --gradient-page: linear-gradient(
+    180deg,
+    #1e2023 0%,
+    #47484c 25%,
+    var(--color-royal-charcoal) 50%,
+    #47484c 75%,
+    #1e2023 100%
+  );
+
+  --color-canvas: rgba(255, 255, 255, 0.03); /* inner glass wells, sidebar */
+  --color-surface-1: rgba(255, 255, 255, 0.045); /* clear glass: the planet shows through */
+  --color-surface-2: rgba(255, 255, 255, 0.05);
+  --color-surface-solid: #2a2c30;
+  --color-border-subtle: rgba(255, 255, 255, 0.14);
+  --color-text-primary: #f5f2ff;
+  --color-text-secondary: #b8b2de;
+  --color-text-placeholder: #8a84b8;
+  --color-text-on-brand: #00033d;
+  --color-navbar-bg: rgba(30, 32, 35, 0.7);
+
+  --glass-blur: 5px;
+  --glass-saturate: 140%;
+  --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.16), inset 0 0 24px 0 rgba(151, 125, 255, 0.06);
 
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.24);
   --shadow-raised: 0 8px 24px -4px rgb(0 0 0 / 0.4);
   --shadow-sheet: 0 -4px 20px -4px rgb(0 0 0 / 0.45);
 }
 
-/* ---- Dark mode: liquid glass ----
- * Surfaces above are translucent in dark mode; these rules give them the
- * blur + edge highlight that makes them read as glass, and give the page a
- * faint brand glow behind them so there is something to refract. Boxes are
- * styled inline with var(--color-surface-1), so they are matched by that. */
-:root:not([data-theme="light"]) body {
-  background:
-    radial-gradient(60rem 40rem at 0% -10%, rgb(199 44 65 / 0.12), transparent 60%),
-    radial-gradient(50rem 40rem at 100% 35%, rgb(128 19 54 / 0.14), transparent 60%),
-    radial-gradient(60rem 45rem at 25% 110%, rgb(81 10 50 / 0.2), transparent 60%),
-    var(--color-canvas);
-  background-attachment: fixed;
-}
-
-:root:not([data-theme="light"]) [style*="--color-surface-1"] {
-  -webkit-backdrop-filter: blur(20px) saturate(170%);
-  backdrop-filter: blur(20px) saturate(170%);
-  /* !important because boxes set `background:` inline, which resets the
-     image layer; the colour itself still comes from the inline style. */
-  background-image: linear-gradient(
-    135deg,
-    rgb(255 255 255 / 0.07) 0%,
-    rgb(255 255 255 / 0.015) 40%,
-    transparent 60%,
-    rgb(238 69 64 / 0.04) 100%
-  ) !important;
-  box-shadow:
-    inset 0 1px 0 0 rgb(255 255 255 / 0.12),
-    inset 0 -1px 0 0 rgb(255 255 255 / 0.02),
-    0 12px 32px -12px rgb(0 0 0 / 0.65);
-}
-
-:root:not([data-theme="light"]) [style*="--color-surface-2"] {
-  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.05);
-}
-
 [data-theme="light"] {
-  --color-canvas: #f8fafc;
-  --color-surface-1: #ffffff;
-  --color-surface-2: #f1f5f9;
-  --color-border-subtle: #e2e8f0;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-placeholder: #94a3b8;
+  /* Light: flat neutral grey page. */
+  --color-page-base: #dbdbdb;
+  --gradient-page: none;
+
+  /* Deeper violets: text-brand-* stays readable on the pale gradient. */
+  --color-brand-300: #8a70fb;
+  --color-brand-400: #7a5ff6;
+  --color-brand-500: #6f53f2;
+  --color-brand-600: #6b4ef0;
+  --color-brand-700: #5a3de0;
+  --color-brand-900: #b9aef0;
+
+  --color-canvas: rgba(236, 236, 238, 0.16);
+  --color-surface-1: rgba(236, 236, 238, 0.24);
+  --color-surface-2: rgba(236, 236, 238, 0.2);
+  --color-surface-solid: #e6e6e8;
+  --color-border-subtle: rgba(0, 3, 61, 0.1);
+  --color-text-primary: #00033d;
+  --color-text-secondary: #4a4572;
+  --color-text-placeholder: #8580a8;
   --color-text-on-brand: #ffffff;
-  --color-navbar-bg: rgba(255, 255, 255, 0.88);
+  --color-navbar-bg: rgba(219, 219, 219, 0.7);
 
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
-  --shadow-raised: 0 10px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
-  --shadow-sheet: 0 -4px 20px -4px rgb(0 0 0 / 0.1);
+  --glass-blur: 10px;
+  --glass-saturate: 150%;
+  --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.35), inset 0 0 24px 0 rgba(255, 255, 255, 0.04);
+
+  --shadow-card: 0 1px 3px 0 rgb(0 3 61 / 0.06), 0 1px 2px -1px rgb(0 3 61 / 0.04);
+  --shadow-raised: 0 10px 25px -5px rgb(0 3 61 / 0.1), 0 8px 10px -6px rgb(0 3 61 / 0.05);
+  --shadow-sheet: 0 -4px 20px -4px rgb(0 3 61 / 0.12);
 }
-

@@ -3,7 +3,7 @@ import { LogoWithWordmark } from '../src/components/ui/Logo';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-6 text-center" style={{ backgroundColor: 'var(--color-canvas)' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-6 text-center" style={{ backgroundColor: 'transparent' }}>
       <LogoWithWordmark size={30} />
       <div>
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>

@@ -39,7 +39,7 @@ export function LandingFooter() {
                   <a href="#payment-certainty" className="hover:opacity-100 transition-opacity">Cross-Border FX</a>
                 </li>
                 <li>
-                  <a href="#product" className="hover:opacity-100 transition-opacity">Business Console</a>
+                  <a href="#payment-certainty" className="hover:opacity-100 transition-opacity">Business Console</a>
                 </li>
                 <li>
                   <a href="#how-it-works" className="hover:opacity-100 transition-opacity">Payment Tracking</a>
@@ -72,7 +72,7 @@ export function LandingFooter() {
               </h4>
               <ul className="flex flex-col gap-2.5 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 <li>
-                  <a href="#why-kimana" className="hover:opacity-100 transition-opacity">Why Kimana</a>
+                  <a href="#solutions" className="hover:opacity-100 transition-opacity">Why Kimana</a>
                 </li>
                 <li>
                   <Link href="/dev/tokens" className="hover:opacity-100 transition-opacity">Design Tokens</Link>

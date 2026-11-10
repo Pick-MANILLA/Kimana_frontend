@@ -1,5 +1,17 @@
 import './globals.css';
+import { Bodoni_Moda } from 'next/font/google';
 import { Providers } from './providers';
+import { AnimatedBackground } from '../src/components/ui/AnimatedBackground';
+
+// Display serif for headlines (variable: weight + optical size). Exposed as
+// --font-bodoni; Tailwind's `font-display` utility maps to it (theme.css).
+const bodoni = Bodoni_Moda({
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  axes: ['opsz'],
+  variable: '--font-bodoni',
+  display: 'swap',
+});
 
 export const metadata = {
   title: 'Kimana',
@@ -29,11 +41,12 @@ const THEME_INIT_SCRIPT = `
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={bodoni.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body>
+        <AnimatedBackground />
         <Providers>{children}</Providers>
       </body>
     </html>

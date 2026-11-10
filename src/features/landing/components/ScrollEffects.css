@@ -1,0 +1,76 @@
+/* ---- Scroll progress bar ---- */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, #977dff, #ffccf2);
+  box-shadow: 0 0 10px rgba(151, 125, 255, 0.6);
+  pointer-events: none;
+}
+
+/* ---- Reveal on scroll ---- */
+.rv-ready [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 36px, 0);
+  filter: blur(6px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--rv-i, 0) * 0.12s);
+}
+
+.rv-ready [data-reveal="left"] { transform: translate3d(-48px, 0, 0); }
+.rv-ready [data-reveal="right"] { transform: translate3d(48px, 0, 0); }
+.rv-ready [data-reveal="zoom"] { transform: scale(0.92); }
+
+.rv-ready [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Revealed cards keep a gentle lift on hover. */
+.rv-ready .rv-lift.is-revealed {
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease,
+    box-shadow 0.35s ease;
+}
+.rv-ready .rv-lift.is-revealed:hover {
+  transform: translate3d(0, -6px, 0);
+  box-shadow: 0 18px 40px -18px rgba(151, 125, 255, 0.45);
+}
+
+/* ---- Hero parallax (--hero-p goes 0 → 1 as the hero scrolls away) ---- */
+.hero-parallax-copy {
+  transform: translate3d(0, calc(var(--hero-p, 0) * -90px), 0);
+  opacity: calc(1 - var(--hero-p, 0) * 1.1);
+  will-change: transform, opacity;
+}
+
+.hero-tilt-stage {
+  perspective: 1400px;
+}
+
+.hero-tilt {
+  transform-origin: 50% 0%;
+  /* Starts tipped back, settles flat by the time the hero is ~half scrolled. */
+  transform:
+    rotateX(calc(14deg - min(var(--hero-p, 0) * 2, 1) * 14deg))
+    scale(calc(0.94 + min(var(--hero-p, 0) * 2, 1) * 0.06));
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-parallax-copy,
+  .hero-tilt {
+    transform: none;
+    opacity: 1;
+  }
+}
